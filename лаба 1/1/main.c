@@ -131,7 +131,7 @@ void print_power_table(int number)
     printf("_______________________\n");
     printf("|base|power|  number  \n");
     printf("-----------------------\n");
-    int preresult;
+    long long int preresult;
     for (int i = 1; i < 11; ++i)
     {
         preresult = 1;
@@ -140,19 +140,19 @@ void print_power_table(int number)
             preresult *= i;
             if (i < 10 && j < 10)
             {
-                printf("| %d  |  %d  |%d\n", i, j, preresult);
+                printf("| %d  |  %d  |%lli\n", i, j, preresult);
             }
             else if (i < 10 && j == 10)
             {
-                printf("| %d  | %d  |%d\n", i, j, preresult);
+                printf("| %d  | %d  |%lli\n", i, j, preresult);
             }
             else if (i == 10 && j < 10)
             {
-                printf("| %d |  %d  |%d\n", i, j, preresult);
+                printf("| %d |  %d  |%lli\n", i, j, preresult);
             }
             else
             {
-                printf("| %d | %d  |%d\n", i, j, preresult);
+                printf("| %d | %d  |%lli\n", i, j, preresult);
             }
         }
         printf("_______________________\n");
@@ -168,19 +168,10 @@ int sum(int number)
 }
 
 // факториал
-int factorial(int number)
+long long int factorial(long long int number)
 {
     if (number == 0) return 1;
-    if (number > 0)
-    {
-        int result = 1;
-        for (int i = 1; i < number + 1; ++i)
-        {
-            result *= i;
-        }
-        return result;
-    }
-    else return -1;
+    return number * factorial(number - 1);
 }
 
 int main(int argc, char *argv[])
@@ -195,10 +186,10 @@ int main(int argc, char *argv[])
         printf("The program input is incorrect.\nTry to run the program again using input format: 'positive number' '-flag'");
         return 0;
     }
-    int number = atoi(argv[1]);
+    long long int number = atoi(argv[1]);
     int length = strlen(argv[1]);
     char state = argv[2][1];
-    int result;
+    long long int result;
     switch(state)
     {
         case 'h':
@@ -233,14 +224,14 @@ int main(int argc, char *argv[])
             printf("Sum of number up to number %d: %d\n", number, result);
             break;
         case 'f':
-            printf("Factorial of %d: ", number);
+            printf("Factorial of %lli: ", number);
             result = factorial(number);
             if (result == -1)
             {
                 printf("impossible to calculate factorial because number is negative.");
                 break;
             }
-            printf("%d\n", result);
+            printf("%lli\n", result);
             break;
     }
 
