@@ -4,21 +4,13 @@
 #include <math.h>
 #include <ctype.h>
 
-char flags[12][3] = {"-h", "/h", "-p", "/p", "-s", "/s", "-e", "/e", "-a", "/a", "-f", "/f"};
-
 // проверка, является ли флагом
 int in_flags(char *item)
 {
-    if (strlen(item) != 2)
-    {
-        return 0;
-    }
+    char flags[12][3] = {"-h", "/h", "-p", "/p", "-s", "/s", "-e", "/e", "-a", "/a", "-f", "/f"};
     for (int i = 0; i < 12; ++i)
     {
-        if (strcmp(item, flags[i]) == 0)
-        {
-            return 1;
-        }
+        if (strcmp(item, flags[i]) == 0) return 1;
     }
     return 0;
 }
@@ -26,19 +18,11 @@ int in_flags(char *item)
 //является ли числом
 int is_digit(char *number)
 {
-    int i;
-    if (number[0] == '-')
+    if (*number == '-') number++;
+    while (*number != '\0')
     {
-        i = 1;
-    }
-    else i = 0;
-    int length = strlen(number);
-    for (i; i < length; ++i)
-    {
-        if (!(number[i] >= '0' && number[i] <= '9'))
-        {
-            return 0;
-        }
+        if (!(*number >= '0' && *number <= '9')) return 0;
+        number++;
     }
     return 1;
 }
