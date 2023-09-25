@@ -7,6 +7,7 @@
 // проверка, является ли флагом
 int in_flags(char *item)
 {
+    if (strlen(item) != 2) return 0;
     char flags[12][3] = {"-h", "/h", "-p", "/p", "-s", "/s", "-e", "/e", "-a", "/a", "-f", "/f"};
     if (item[0] != '-' || item[0] != '-') return 0;
     for (int i = 0; i < 12; ++i)
