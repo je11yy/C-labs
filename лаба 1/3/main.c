@@ -120,13 +120,13 @@ void function_solution(double* solutions, double eps, double *odds)
 }
 
 //перестановка
-int permutations(double *odds, int length)
+int permutations(double *odds, int length, double eps)
 {
     int i = length - 2;
-    while (i != -1 && odds[i] >= odds[i + 1]) i--;
+    while (i != -1 && (odds[i] - odds[i + 1]) >= eps) i--;
     if (i == -1) return 0;
     int j = length - 1;
-    while (odds[i] >= odds[j]) j--;
+    while ((odds[i] - odds[j]) >= eps) j--;
 
     double temp = odds[i];
     odds[i] = odds[j];
@@ -241,7 +241,7 @@ int main(int argc, char *argv[])
                 else printf("no solutions");
                 printf("\n\n");
             } 
-            while (permutations(odds, length));
+            while (permutations(odds, length, eps));
             return 0;
 
         case 'm':
