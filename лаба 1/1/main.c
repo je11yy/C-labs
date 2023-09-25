@@ -8,9 +8,10 @@
 int in_flags(char *item)
 {
     char flags[12][3] = {"-h", "/h", "-p", "/p", "-s", "/s", "-e", "/e", "-a", "/a", "-f", "/f"};
+    if (item[0] != '-' || item[0] != '-') return 0;
     for (int i = 0; i < 12; ++i)
     {
-        if (strcmp(item, flags[i]) == 0) return 1;
+        if (item[1] == flags[i][1]) return 1;
     }
     return 0;
 }
@@ -18,6 +19,7 @@ int in_flags(char *item)
 //является ли числом
 int is_digit(char *number)
 {
+    if (!strcmp(number, "-")) return 0;
     if (*number == '-') number++;
     while (*number != '\0')
     {
@@ -30,7 +32,7 @@ int is_digit(char *number)
 // проверка на валидность
 int valid_check(char *number, char *flag)
 {
-    if (in_flags(flag) != 1)
+    if (!in_flags(flag))
     {
         return 0;
     }
@@ -43,7 +45,6 @@ int valid_check(char *number, char *flag)
 }
 
 //вывод кратных чисел в пределах 100 включительно
-// нужно ли выводить само число???
 void print_multiples(int number)
 {
     if (number <= 0) 
@@ -51,17 +52,17 @@ void print_multiples(int number)
         printf("Impossible to calculate multiples because the number is negative or equal to 0.\n");
         return;
     }
-    int c = 0;
+    int count = 0;
     printf("Multiples of %d: ", number);
-    for (int i = number + 1; i < 101; ++i)
+    for (int i = number; i < 101; i += number)
     {
         if (i % number == 0)
         {
             printf("%d ", i);
-            c += 1;
+            count += 1;
         }
     }
-    if (c == 0)
+    if (count == 0)
     {
         printf("this number has no multiples in range 100.");
     }
@@ -72,7 +73,7 @@ void print_multiples(int number)
 //является ли число простым или составным
 int check_prime(int number)
 {
-    if (number <= 1) return 0;
+    if (number <= 1) return -1;
 
     for (int i = 2; i <= (int)sqrt(number); ++i)
     {
@@ -91,7 +92,8 @@ void print_number_to_figure(char *number)
     else i = 0;
     while (number[i] == '0') i += 1;
     printf("Number %d in string representation: ", atoi(number));
-    for (i; i < strlen(number); ++i)
+    int length = strlen(number);
+    for (i; i < length; ++i)
     {
         printf("%c ", number[i]);
     }
@@ -154,7 +156,9 @@ int sum(int number)
 // факториал
 long long int factorial(long long int number)
 {
-    if (number == 0) return 1;
+    if (number > 20) return 0;
+    if (number < 0) return -1;
+    if (number == 0 || number == 1) return 1;
     return number * factorial(number - 1);
 }
 
@@ -171,7 +175,6 @@ int main(int argc, char *argv[])
         return 0;
     }
     long long int number = atoi(argv[1]);
-    int length = strlen(argv[1]);
     char state = argv[2][1];
     long long int result;
     switch(state)
@@ -181,6 +184,11 @@ int main(int argc, char *argv[])
             break;
         case 'p':
             result = check_prime(number);
+            if (result == -1)
+            {
+                printf("%d is not a prime and a compound number.\n", number);
+                break;
+            }
             if (result == 1)
             {
                 printf("%d is a prime number.\n", number);
@@ -208,13 +216,18 @@ int main(int argc, char *argv[])
             printf("Sum of number up to number %d: %d\n", number, result);
             break;
         case 'f':
-            printf("Factorial of %lli: ", number);
             result = factorial(number);
+            if (result == 0)
+            {
+                printf("impossible to calculate factorial because number > 20.");
+                break;
+            }
             if (result == -1)
             {
                 printf("impossible to calculate factorial because number is negative.");
                 break;
             }
+            printf("Factorial of %lli: ", number);
             printf("%lli\n", result);
             break;
     }
