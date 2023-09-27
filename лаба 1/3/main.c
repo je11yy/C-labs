@@ -5,7 +5,6 @@
 #include <ctype.h>
 
 double UNDEFINED = -1.111111111;
-char flags[6][3] = {"-q", "/q", "-m", "/m", "-t", "/t"};
 
 // проверка, является ли флагом
 int in_flags(char *item)
@@ -224,10 +223,10 @@ int main(int argc, char *argv[])
                 printf("Incorrect input. Please, try again with format: '-flag' 'epsilon' 'val1' 'val2' 'val3' ");
                 return 0;
             }
-            double eps = strtod(argv[2], NULL);
-            double a = strtod(argv[3], NULL);
-            double b = strtod(argv[4], NULL);
-            double c = strtod(argv[5], NULL);
+            double eps = atof(argv[2]);
+            double a = atof(argv[3]);
+            double b = atof(argv[4]);
+            double c = atof(argv[5]);
             double odds[] = { a, b, c };
             int length = 3;
             double solutions[2] = {0};
@@ -272,10 +271,10 @@ int main(int argc, char *argv[])
 
                 return 0;
             }
-            double eps_1 = strtod(argv[2], NULL);
-            double a_2 = strtod(argv[3], NULL);
-            double b_2 = strtod(argv[4], NULL);
-            double c_2 = strtod(argv[5], NULL);
+            double eps_1 = atof(argv[2]);
+            double a_2 = atof(argv[3]);
+            double b_2 = atof(argv[4]);
+            double c_2 = atof(argv[5]);
             if(!triangle(eps_1, a_2, b_2, c_2))
             {
                 printf("%.1f, %.1f, %.1f can't be lengths of a right triangle.", a_2, b_2, c_2);
