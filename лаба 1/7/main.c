@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define N 100
+#define N 9
 
 int is_flag(char *flag)
 {
@@ -43,9 +43,9 @@ int read_file(FILE* file, char *words)
             word_count++;
         }
         else if (!is_delimiter(temp)) flag = 1;
-        if (count == N)
+        if (length <= count)
         {
-            length++;
+            length *= 2;
             temp_1 = (char*)realloc(words, length * sizeof(char));
             if (temp_1 == NULL) return 0;
             words = temp_1;
@@ -105,10 +105,18 @@ int flag_r(FILE* input_1, FILE* input_2, FILE* output)
     char *words_2 = temp_2;
 
     int result_1 = read_file(input_1, words_1);
-    if (!result_1) return 0;
+    if (!result_1)
+    {
+        free(words_1);
+        return 0;
+    }
 
     int result_2 = read_file(input_2, words_2);
-    if (!result_2) return 0;
+    if (!result_2)
+    {
+        free(words_2);
+        return 0;
+    }
 
     print_result(output, words_1, words_2, result_1, result_2);
 
