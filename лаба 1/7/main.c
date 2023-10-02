@@ -3,8 +3,6 @@
 #include <string.h>
 #include <ctype.h>
 
-#define N 9
-
 int is_flag(char *flag)
 {
     if (!(flag[0] == '/' || flag[0] == '-')) return 0;
@@ -26,12 +24,15 @@ int is_delimiter(char symbol)
     return 0;
 }
 
-int read_file(FILE* file, char *words)
+int read_file(FILE* file, char **words)
 {
     char temp = fgetc(file);
     if (temp == EOF) return 0; // пустой файл
-    char *temp_1;
-    int length = N;
+
+    int length = 2;
+    char *temp_1 = (char*)malloc(length * sizeof(char));
+    if (temp_1 == NULL) return 0;
+    (*words) = temp_1;
     int count = 0;
     int flag = 0;
     int word_count = 0;
@@ -46,15 +47,15 @@ int read_file(FILE* file, char *words)
         if (length <= count)
         {
             length *= 2;
-            temp_1 = (char*)realloc(words, length * sizeof(char));
+            temp_1 = (char*)realloc((*words), length * sizeof(char));
             if (temp_1 == NULL) return 0;
-            words = temp_1;
+            *words = temp_1;
         }
-        words[count] = temp;
+        (*words)[count] = temp;
         count++;
         temp = fgetc(file);
     }
-    words[count] = '\0';
+    (*words)[count] = '\0';
     return word_count + 1;
 }
 
@@ -63,8 +64,8 @@ void print_result(FILE* file, char *words_1, char *words_2, int words_count_1, i
     int max_count;
     if (words_count_1 >= words_count_2) max_count = words_count_1;
     else max_count = words_count_2;
-
     char *words_array_1[words_count_1];
+
     char *word_1 = strtok(words_1, " \n\t");
     for (int i = 0; i < words_count_1; ++i)
     {
@@ -96,28 +97,22 @@ void print_result(FILE* file, char *words_1, char *words_2, int words_count_1, i
 
 int flag_r(FILE* input_1, FILE* input_2, FILE* output)
 {
-    char *temp = malloc(sizeof(char) * N);
-    if (temp == NULL) return 0;
-    char *words_1 = temp;
+    char *words_1 = NULL;
+    char *words_2 = NULL;
 
-    char *temp_2 = malloc(sizeof(char) * N);
-    if (temp_2 == NULL) return 0;
-    char *words_2 = temp_2;
-
-    int result_1 = read_file(input_1, words_1);
+    int result_1 = read_file(input_1, &words_1);
     if (!result_1)
     {
         free(words_1);
         return 0;
     }
 
-    int result_2 = read_file(input_2, words_2);
+    int result_2 = read_file(input_2, &words_2);
     if (!result_2)
     {
         free(words_2);
         return 0;
     }
-
     print_result(output, words_1, words_2, result_1, result_2);
 
     free(words_1);
@@ -152,11 +147,9 @@ int base_4(int number)
 
 int flag_a(FILE* input, FILE* output)
 {
-    char *temp = malloc(sizeof(char) * N);
-    if (temp == NULL) return 0;
-    char *words = temp;
+    char *words = NULL;
 
-    int length = read_file(input, words);
+    int length = read_file(input, &words);
 
     if (!length) return 0;
 
