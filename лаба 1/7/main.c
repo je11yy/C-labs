@@ -3,7 +3,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define N 256
+#define N 100
 
 int is_flag(char *flag)
 {
@@ -20,35 +20,101 @@ void input_error()
     return;
 }
 
-int read_file(char words[][N], FILE* file)
+int is_delimiter(char symbol)
 {
+    if (symbol == ' ' || symbol == '\n' || symbol == '\t') return 1;
+    return 0;
+}
+
+int read_file(FILE* file, char *words)
+{
+    char temp = fgetc(file);
+    if (temp == EOF) return 0; // пустой файл
+    char *temp_1;
+    int length = N;
     int count = 0;
-    while(!feof(file))
+    int flag = 0;
+    int word_count = 0;
+    while (temp != EOF)
     {
-        fscanf(file, "%s", words[count]);
-        count += 1;
+        if (is_delimiter(temp) && flag == 1)
+        {
+            flag = 0;
+            word_count++;
+        }
+        else if (!is_delimiter(temp)) flag = 1;
+        if (count == N)
+        {
+            length++;
+            temp_1 = (char*)realloc(words, length * sizeof(char));
+            if (temp_1 == NULL) return 0;
+            words = temp_1;
+        }
+        words[count] = temp;
+        count++;
+        temp = fgetc(file);
     }
-    return count;
+    words[count] = '\0';
+    return word_count + 1;
+}
+
+void print_result(FILE* file, char *words_1, char *words_2, int words_count_1, int words_count_2)
+{
+    int max_count;
+    if (words_count_1 >= words_count_2) max_count = words_count_1;
+    else max_count = words_count_2;
+
+    char *words_array_1[words_count_1];
+    char *word_1 = strtok(words_1, " \n\t");
+    for (int i = 0; i < words_count_1; ++i)
+    {
+        words_array_1[i] = word_1;
+        word_1 = strtok(NULL, " \n\t");
+    }
+
+    char *words_array_2[words_count_2];
+    char *word_2 = strtok(words_2, " \n\t");
+    for (int i = 0; i <= words_count_2; ++i)
+    {
+        words_array_2[i] = word_2;
+        word_2 = strtok(NULL, " \n\t");
+    }
+
+    for (int i = 0; i < max_count; ++i)
+    {
+        if (i < words_count_1)
+        {
+            fprintf(file, "%s ", words_array_1[i]);
+        }
+        if (i < words_count_2)
+        {
+            fprintf(file, "%s ", words_array_2[i]);
+        }
+    }
+    return;
 }
 
 int flag_r(FILE* input_1, FILE* input_2, FILE* output)
 {
-    char words_1[N][N] = {"\0"};
-    char words_2[N][N] = {"\0"};
-    int length_1 = read_file(words_1, input_1);
-    int length_2 = read_file(words_2, input_2);
-    if (length_1 > N || length_2 > N) return 0;
-    if (length_1 == -1 || length_2 == -1) return 0;
+    char *temp = malloc(sizeof(char) * N);
+    if (temp == NULL) return 0;
+    char *words_1 = temp;
 
-    int max_length;
-    if (length_1 >= length_2) max_length = length_1;
-    else max_length = length_2;
+    char *temp_2 = malloc(sizeof(char) * N);
+    if (temp_2 == NULL) return 0;
+    char *words_2 = temp_2;
 
-    for (int i = 0; i < max_length; ++i)
-    {
-        if (i < length_1) fprintf(output, "%s ", words_1[i]);
-        if (i < length_2) fprintf(output, "%s ", words_2[i]);
-    }
+    int result_1 = read_file(input_1, words_1);
+    if (!result_1) return 0;
+
+    int result_2 = read_file(input_2, words_2);
+    if (!result_2) return 0;
+
+    print_result(output, words_1, words_2, result_1, result_2);
+
+    free(words_1);
+    free(words_2);
+
     return 1;
 }
 
@@ -78,42 +144,54 @@ int base_4(int number)
 
 int flag_a(FILE* input, FILE* output)
 {
-    char words[N][N] = {"\0"};
-    int length = read_file(words, input);
+    char *temp = malloc(sizeof(char) * N);
+    if (temp == NULL) return 0;
+    char *words = temp;
 
-    if (length > N) return 0;
-    if (length == -1) return 0;
+    int length = read_file(input, words);
+
+    if (!length) return 0;
+
+    char *words_array[length];
+    char *word = strtok(words, " \n\t");
+    for (int i = 0; i < length; ++i)
+    {
+        words_array[i] = word;
+        word = strtok(NULL, " \n\t");
+    }
 
     for (int i = 0; i < length; ++i)
     {
         if ((i + 1) % 10 == 0)
         {
-            make_lower(words[i]);
-            for (int j = 0; words[i][j] != '\0'; j++)
+            make_lower(words_array[i]);
+            for (int j = 0; words_array[i][j] != '\0'; j++)
             {
-                fprintf(output, "%d", base_4(words[i][j]));
+                fprintf(output, "%d", base_4(words_array[i][j]));
             }
             fputc(' ', output);
         }
         else if ((i + 1) % 2 == 0)
         {
-            make_lower(words[i]);
-            fprintf(output, "%s ", words[i]);
+            make_lower(words_array[i]);
+            fprintf(output, "%s ", words_array[i]);
         }
         else if ((i + 1) % 5 == 0)
         {
-            for (int j = 0; words[i][j] != '\0'; j++)
+            for (int j = 0; words_array[i][j] != '\0'; j++)
             {
-                fprintf(output, "%o", words[i][j]);
+                fprintf(output, "%o", words_array[i][j]);
             }
             fputc(' ', output);
         }
-        else fprintf(output, "%s ", words[i]);
+        else fprintf(output, "%s ", words_array[i]);
     }
+    free(words);
 }
 
 int main(int argc, char *argv[])
 {
+
     if (!(argc == 5 || argc == 4))
     {
         printf("Too many or too low arguments! ");
@@ -168,7 +246,7 @@ int main(int argc, char *argv[])
             result = flag_r(input_1, input_2, output);
             if (!result)
             {
-                printf("Too many words in file! Max quantity is 256 words.\n");
+                printf("File Error!\n");
                 fclose(input_1);
                 fclose(input_2);
                 fclose(output);
