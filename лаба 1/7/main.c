@@ -30,9 +30,10 @@ int read_file(FILE* file, char **words)
     if (temp == EOF) return 0; // пустой файл
 
     int length = 2;
-    char *temp_1 = (char*)malloc(length * sizeof(char));
-    if (temp_1 == NULL) return 0;
-    (*words) = temp_1;
+    (*words)  = (char*)malloc(length * sizeof(char));
+    if ((*words) == NULL) return -1; //память
+
+    char *temp_1;
     int count = 0;
     int flag = 0;
     int word_count = 0;
@@ -48,7 +49,7 @@ int read_file(FILE* file, char **words)
         {
             length *= 2;
             temp_1 = (char*)realloc((*words), length * sizeof(char));
-            if (temp_1 == NULL) return 0;
+            if (temp_1 == NULL) return -1;
             *words = temp_1;
         }
         (*words)[count] = temp;
@@ -56,6 +57,7 @@ int read_file(FILE* file, char **words)
         temp = fgetc(file);
     }
     (*words)[count] = '\0';
+    if (word_count == 0) return 0; 
     return word_count + 1;
 }
 
@@ -151,7 +153,11 @@ int flag_a(FILE* input, FILE* output)
 
     int length = read_file(input, &words);
 
-    if (!length) return 0;
+    if (!length)
+    {
+        free(words);
+        return 0;
+    }
 
     char *words_array[length];
     char *word = strtok(words, " \n\t");
@@ -245,9 +251,17 @@ int main(int argc, char *argv[])
                 return 0;
             }
             result = flag_r(input_1, input_2, output);
-            if (!result)
+            if (result == 0)
             {
-                printf("File Error!\n");
+                printf("Incorrect file-input!\n");
+                fclose(input_1);
+                fclose(input_2);
+                fclose(output);
+                return 0;
+            }
+            else if (result == -1)
+            {
+                printf("Memory error!\n");
                 fclose(input_1);
                 fclose(input_2);
                 fclose(output);
