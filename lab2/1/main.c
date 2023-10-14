@@ -15,7 +15,7 @@ int check_valid_flag(char *flag);
 
 void print_error(int error);
 
-int function_c(char **result, char* arguments[], int size, unsigned int seed);
+int function_c(char **result, char *prev_string, char* arguments[], int size, unsigned int seed);
 
 int is_number(char *number);
 
@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
             }
             seed = atoi(seed_string);
             new_string = NULL;
-            result = function_c(&new_string, argv + 4, argc - 4, seed);
+            result = function_c(&new_string, string, argv + 4, argc - 4, seed);
             if (result == no_memory)
             {
                 print_error(result);
@@ -239,14 +239,15 @@ int function_u(char **new_string, char *string)
 int reversed(char **new_string, char *string)
 {
     int length = get_size(string);
+
     *new_string = (char*)malloc((length + 1) * sizeof(char));
     if (*new_string == NULL) return no_memory;
-
     (*new_string)[length] = '\0';
-    while (*string != '\0')
+
+    for (int i = 0; i <= length / 2; ++i)
     {
-        (*new_string)[--length] = *string;
-        string++;
+        (*new_string)[i] = string[length - i - 1];
+        (*new_string)[length - i - 1] = string[i];
     }
     return success;
 }
@@ -273,7 +274,7 @@ int get_size(char *string)
 }
 
 //конкатенация - склеивание строк
-int function_c(char **result, char* arguments[], int size, unsigned int seed)
+int function_c(char **result, char *prev_string, char* prev_arguments[], int size, unsigned int seed)
 {
     srand(seed);
     int length = 0;
@@ -281,6 +282,17 @@ int function_c(char **result, char* arguments[], int size, unsigned int seed)
     int string_length;
     *result = (char*)malloc(sizeof(char) * length);
     if (*result == NULL) return no_memory;
+
+    char** arguments = (char**)malloc(size * sizeof(char*) + 1);
+    if (arguments == NULL) return no_memory;
+
+    arguments[0] = prev_string;
+    for (int i = 1; i <= size; ++i)
+    {
+        arguments[i] = prev_arguments[i - 1];
+    }
+    size++;
+
     char *string;
     char *temp;
     int a = 0, b = size - 1;
@@ -314,7 +326,7 @@ int function_c(char **result, char* arguments[], int size, unsigned int seed)
         (*result)[new_length] = '\0';
         length = new_length;
     }
-
+    free(arguments);
     return success;
 }
 
