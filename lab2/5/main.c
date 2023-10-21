@@ -56,7 +56,7 @@ int main()
     double md = 16.5;
     float mf = 16.5;
 
-    int result = overfprintf(stdout, "\n%d %.3f\nroman: %Ro\nzeckendorf: %Zr\nto low base: %Cv\nto high base: %CV\nto decimal low: %to\n", 3, 0.5, 172, for_zr, 1839, 16, 1839, 16, "ef", 16);
+    int result = overfprintf(stdout, "\n%d\nroman: %Ro\nzeckendorf: %Zr\nto low base: %Cv\nto high base: %CV\nto decimal low: %to\n", 3, 172, for_zr, 1839, 16, 1839, 16, "ef", 16);
     if (result == no_memory)
     {
         print_error(result);
@@ -90,7 +90,6 @@ int main()
         return result;
     }
     
-
     //////////////////////////////////////////
     char answer[256] = {0};
     result = oversprintf(answer, "%d %f %Ro %CV", 3, 0.5, 173, 1839, 16);
@@ -841,8 +840,8 @@ int print_bytes(unsigned char ** answer, const void * number, size_t size)
     unsigned char *byte_ptr = (unsigned char*) number;
     unsigned char byte, bit;
     unsigned char * buffer = (unsigned char*) malloc(size * sizeof(unsigned char));
-    buffer[size - 1] = '\0';
     if (buffer == NULL) return no_memory;
+    buffer[size - 1] = '\0';
     int k = 0;
     for (size_t i = 0; i < size; ++i)
     {
