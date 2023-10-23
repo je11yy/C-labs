@@ -30,376 +30,136 @@ enum ROMAN
     M = 1000
 };
 
-int check_is_flag(char a, char b);
-int overfprintf(FILE *stream, const char *format, ...);
 int print_roman(char **answer, int number);
-int find_max_fibonacci(int *fib, int number);
 int print_zeckendorf(char ** answer, unsigned int number);
-int number_to_base_low(char ** answer, int number, int base);
+int find_max_fibonacci(int *fib, int number);
 int number_to_base_high(char ** answer, int number, int base);
+int number_to_base_low(char ** answer, int number, int base);
 int getlen(int number, int base);
-int print_bytes(unsigned char ** answer, const void * number, size_t size);
-void print_error(int error);
+int get_decimal_number(char * number, int base);
+int overfprintf(FILE *stream, const char *format, ...);
 int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2);
-int get_decimal_number(char* number, int base);
-int oversprintf(char buf[], const char * format, ...);
-int buf_my_flags(char ** buf, va_list *arguments, char flag1, char flag2);
-int append_string(char answer[], int *length, char *string);
-int append_string2(char answer[], int *length, char string[], int len);
+int print_bytes(unsigned char ** answer, const void * number, size_t size);
+int check_is_flag(char a, char b);
+void print_error(int error);
+int oversprintf(char * buffer, const char *format, ...);
 
 int main()
 {
-    unsigned int for_zr = 51;
-    signed int mi = +16;
-    signed int mi1 = -16;
-    unsigned int mu = 16;
-    double md = 16.5;
-    float mf = 16.5;
-
-    int result = overfprintf(stdout, "\n%d\nroman: %Ro\nzeckendorf: %Zr\nto low base: %Cv\nto high base: %CV\nto decimal low: %to\n", 3, 172, for_zr, 1839, 16, 1839, 16, "ef", 16);
-    if (result == no_memory)
-    {
-        print_error(result);
-        return result;
-    }
-    if (result == incorrect_input)
-    {
-        print_error(result);
-        return result;
-    }
-    if (result == fail)
-    {
-        print_error(result);
-        return result;
-    }
-
-    result = overfprintf(stdout, "to decimal high: %TO\nbytes signed: %mi\nbytes signed: %mi\nbytes unsigned: %mu\nbytes double: %md\nbytes float: %mf\n", "EF", 16, mi, mi1, mu, md, mf);
-    if (result == no_memory)
-    {
-        print_error(result);
-        return result;
-    }
-    if (result == incorrect_input)
-    {
-        print_error(result);
-        return result;
-    }
-    if (result == fail)
-    {
-        print_error(result);
-        return result;
-    }
-    
-    //////////////////////////////////////////
-    char answer[256] = {0};
-    result = oversprintf(answer, "%d %f %Ro %CV", 3, 0.5, 173, 1839, 16);
-    if (result == no_memory)
-    {
-        print_error(result);
-        return result;
-    }
-    if (result == incorrect_input)
-    {
-        print_error(result);
-        return result;
-    }
-    if (result == fail)
-    {
-        print_error(result);
-        return result;
-    }
-
-    printf("\nfor sprintf: %s\n", answer);
-    printf("\n\nThe program has finished correctly.\n\n");
-    return success;
-}
-
-int oversprintf(char buf[], const char * format, ...)
-{
-    va_list arguments;
-    va_start(arguments, format);
-
-    int length = strlen(format);
-    char *temp = (char*)calloc(length, sizeof(char));
-    if (temp == NULL)
-    {
-        va_end(arguments);
-        return no_memory;
-    }
-
-    char * answer = NULL;
-    char answer1[256] = {0};
-
-    int result;
     int count = 0;
-    int len = 0;
-    int j = 0;
-    for (int i = 0; i < length; ++i)
+    int result = overfprintf(stdout, "dhdh%n %d\n\t7%d\n", &count, 3, 8);
+    printf("%d\n", count);
+    if (result == incorrect_input)
     {
-        if (format[i] == '%')
-        {
-            if (check_is_flag(format[i + 1], format[i + 2]) == success && format[i + 1] != 'm')
-            {
-                if (i != 0)
-                {
-                    result = vsprintf(answer1, temp, arguments);
-                    if (result < 0)
-                    {
-                        free(temp);
-                        temp = NULL;
-                        free(answer);
-                        answer = NULL;
-                        va_end(arguments);
-                        return fail;
-                    }
-                    result = append_string2(buf, &len, answer1, result);
-
-                    j = 0;
-                    for (int k = 0; k < count; ++k)
-                    {
-                        while (temp[j] != '%') j++;
-                        j++;
-                        while (temp[j] != ' ' && temp[j] != '%' && temp[j] != '\0' && temp[j] != '\n' && temp[j] != '\t') j++;
-
-                        if (temp[j - 1] == 'f') va_arg(arguments, double);
-                        else va_arg(arguments, void*);
-                    }
-                }
-                count = 0;
-                // распечатать штуку по флагу
-                result = buf_my_flags(&answer, &arguments, format[i + 1], format[i + 2]);
-                if (result == no_memory)
-                {
-                    free(temp);
-                    temp = NULL;
-                    free(answer);
-                    answer = NULL;
-                    va_end(arguments);
-                    return result;
-                }
-                if (result == incorrect_input)
-                {
-                    free(temp);
-                    temp = NULL;
-                    free(answer);
-                    answer = NULL;
-                    va_end(arguments);
-                    return result;
-                }
-                result = append_string(buf, &len, answer);
-                free(answer);
-                answer = NULL;
-
-                i += 3;
-                j = 0;
-                // очистить временную строку
-                free(temp);
-                temp = NULL;
-                temp = (char*)calloc(length, sizeof(char));
-                if (temp == NULL)
-                {
-                    free(answer);
-                    answer = NULL;
-                    va_end(arguments);
-                    return result;
-                }
-            }
-            else count++;
-        }
-        // добавление в строку
-        temp[j] = format[i];
-        j++;
+        print_error(result);
+        return result;
     }
-    if (j != 0)
+    if (result == no_memory)
     {
-        result = vsprintf(answer1, temp, arguments);
-        if (result < 0)
-        {
-            free(answer);
-            answer = NULL;
-            free(temp);
-            temp = NULL;
-            va_end(arguments);
-            return fail;
-        }
-        result = append_string2(buf, &len, answer1, result);
+        print_error(result);
+        return result;
     }
-    free(temp);
-    temp = NULL;
-    free(answer);
-    answer = NULL;
+    if (result == fail)
+    {
+        print_error(result);
+        return result;
+    }
 
-    va_end(arguments);
+    result = overfprintf(stdout, "\nRoman: %Ro\nZeckendorf: %Zr\nTo base low: %Cv\n", 1524, 562, 978, 16);
+    if (result == incorrect_input)
+    {
+        print_error(result);
+        return result;
+    }
+    if (result == no_memory)
+    {
+        print_error(result);
+        return result;
+    }
+    if (result == fail)
+    {
+        print_error(result);
+        return result;
+    }
+
+    result = overfprintf(stdout, "To base high: %CV\nTo decimal low: %to\nTo decimal high: %TO\n", 978, 16, "FE", 16, "fe", 16);
+    if (result == incorrect_input)
+    {
+        print_error(result);
+        return result;
+    }
+    if (result == no_memory)
+    {
+        print_error(result);
+        return result;
+    }
+    if (result == fail)
+    {
+        print_error(result);
+        return result;
+    }
+
+    signed int mi = +136;
+    unsigned int mu = 136;
+    double md = 136.0;
+    float mf = 136.0;
+    result = overfprintf(stdout, "Bytes signed int: %mi\nBytes unsigned int: %mu\nBytes double: %md\nBytes float: %mf\n", mi, mu, md, mf);
+    if (result == incorrect_input)
+    {
+        print_error(result);
+        return result;
+    }
+    if (result == no_memory)
+    {
+        print_error(result);
+        return result;
+    }
+    if (result == fail)
+    {
+        print_error(result);
+        return result;
+    }
+
+    int size = 256;
+    char buffer[size];
+    result = oversprintf(buffer, "\nTo base high: \t%CV\n\tTo decimal low: %to\nTo decimal high: %TO\n", 978, 16, "FE", 16, "fe", 16);
+    if (result == incorrect_input)
+    {
+        print_error(result);
+        return result;
+    }
+    if (result == no_memory)
+    {
+        print_error(result);
+        return result;
+    }
+    if (result == fail)
+    {
+        print_error(result);
+        return result;
+    }
+    buffer[size - 1] = '\0';
+    printf("%s", buffer);
+
+    printf("\nThe program has finished correctly.");
     return success;
 }
 
-int append_string(char answer[], int *length, char * string)
+int oversprintf(char * buffer, const char *format, ...)
 {
-    int len = strlen(string);
-
-    for (int i = *length, j = 0; i < *length + len, j < len; ++i, ++j)
-    {
-        answer[i] = string[j];
-    }
-    answer[*length + len] = '\0';
-
-    *length += len;
-    return success;
-}
-
-int append_string2(char answer[], int *length, char string[], int len)
-{
-    for (int i = *length, j = 0; i < *length + len, j < len; ++i, ++j)
-    {
-        answer[i] = string[j];
-    }
-    answer[*length + len] = '\0';
-
-    *length += len;
-    return success;
-}
-
-int buf_my_flags(char ** buf, va_list *arguments, char flag1, char flag2)
-{
-    char *answer = NULL;
-    unsigned char *answer1 = NULL;
-    int result, result1;
-    signed int number1;
-    unsigned int number2;
-    double number3;
-    float number4;
-    char *string;
-    switch (flag1)
-    {
-        case 'R':
-            result = va_arg(*arguments, int);
-            result = print_roman(&answer, result);
-            if (result == no_memory)
-            {
-                free(answer);
-                answer = NULL;
-                return no_memory;
-            }
-            *buf = answer;
-            break;
-        case 'Z':
-            result = va_arg(*arguments, unsigned int);
-            result = print_zeckendorf(&answer, result);
-            if (result == no_memory)
-            {
-                free(answer);
-                answer = NULL;
-                return no_memory;
-            }
-            *buf = answer;
-            break;
-        case 'C':
-            switch (flag2)
-            {
-                case 'v':
-                    result = va_arg(*arguments, int);
-                    result1 = va_arg(*arguments, int);
-                    result = number_to_base_low(&answer, result, result1);
-                    if (result == no_memory)
-                    {
-                        free(answer);
-                        answer = NULL;
-                        return no_memory;
-                    }
-                    *buf = answer;
-                    break;
-                case 'V':
-                    result = va_arg(*arguments, int);
-                    result1 = va_arg(*arguments, int);
-                    result = number_to_base_high(&answer, result, result1);
-                    if (result == no_memory)
-                    {
-                        free(answer);
-                        answer = NULL;
-                        return no_memory;
-                    }
-                    *buf = answer;
-                    break;
-            }
-            break;
-        case 't':
-            string = va_arg(*arguments, char*);
-            result = va_arg(*arguments, int);
-            result = get_decimal_number(string, result);
-            sprintf(*buf, "%d", result);
-            result = success;
-            break;
-        case 'T':
-            string = va_arg(*arguments, char*);
-            result = va_arg(*arguments, int);
-            result = get_decimal_number(string, result);
-            sprintf(*buf, "%d", result);
-            result = success;
-            break;
-        case 'm':
-            switch (flag2)
-            {
-                case 'i':
-                    number1 = va_arg(*arguments, signed int);
-                    result = print_bytes(&answer1, &number1, sizeof(signed int));
-                    if (result == no_memory)
-                    {
-                        free(answer1);
-                        answer1 = NULL;
-                        return no_memory;
-                    }
-                    *buf = answer1;
-                    break;
-                case 'u':
-                    number2 = va_arg(*arguments, unsigned int);
-                    result = print_bytes(&answer1, &number2, sizeof(unsigned int));
-                    if (result == no_memory)
-                    {
-                        free(answer1);
-                        answer1 = NULL;
-                        return no_memory;
-                    }
-                    *buf = answer1;
-                    break;
-                case 'd':
-                    number3 = va_arg(*arguments, double);
-                    result = print_bytes(&answer1, &number3, sizeof(double));
-                    if (result == no_memory)
-                    {
-                        free(answer1);
-                        answer1 = NULL;
-                        return no_memory;
-                    }
-                    *buf = answer1;
-                    break;
-                case 'f':
-                    number4 = (float) va_arg(*arguments, double);
-                    result = print_bytes(&answer1, &number4, sizeof(float));
-                    if (result == no_memory)
-                    {
-                        free(answer1);
-                        answer1 = NULL;
-                        return no_memory;
-                    }
-                    *buf = answer1;
-                    break;
-            }
-            break;
-    }
-    return result;
-}
-
-// возвращает число выведенных символов или отрицательное значение в случае ошибки
-int overfprintf(FILE *stream, const char *format, ...)
-{
+    FILE * stream = tmpfile();
+    if (!stream) return incorrect_input;
     va_list arguments;
     va_start(arguments, format);
 
+    int* ptr;
+
     int length = strlen(format);
+    if (!length) return incorrect_input;
+
     char *temp = (char*)malloc((length + 1) * sizeof(char));
     if (temp == NULL)
     {
-        printf("\nHERE\n");
         va_end(arguments);
         return no_memory;
     }
@@ -407,14 +167,16 @@ int overfprintf(FILE *stream, const char *format, ...)
     int result;
     int count = 0;
     int j = 0;
+    int symbols_count = 0;
     for (int i = 0; i < length; ++i)
     {
         if (format[i] == '%')
         {
-            if (check_is_flag(format[i + 1], format[i + 2]) == success)
+            if ((check_is_flag(format[i + 1], format[i + 2]) == success) || format[i + 1] == 'n')
             {
                 if (i != 0)
                 {
+                    temp[j] = '\0';
                     result = vfprintf(stream, temp, arguments);
                     if (result < 0)
                     {
@@ -423,6 +185,7 @@ int overfprintf(FILE *stream, const char *format, ...)
                         va_end(arguments);
                         return fail;
                     }
+                    symbols_count += result;
                     j = 0;
                     for (int k = 0; k < count; ++k)
                     {
@@ -435,25 +198,35 @@ int overfprintf(FILE *stream, const char *format, ...)
                     }
                 }
                 count = 0;
-                // распечатать штуку по флагу
-                result = print_my_flags(stream, &arguments, format[i + 1], format[i + 2]);
-                if (result == no_memory)
+                if (format[i + 1] == 'n')
                 {
-                    free(temp);
-                    temp = NULL;
-                    va_end(arguments);
-                    return result;
+                    ptr = va_arg(arguments, int*);
+                    *ptr = i;
+                    i++;
                 }
-                if (result == incorrect_input)
+                else
                 {
-                    free(temp);
-                    temp = NULL;
-                    va_end(arguments);
-                    return result;
-                }
+                    // распечатать штуку по флагу
+                    result = print_my_flags(stream, &arguments, format[i + 1], format[i + 2]);
+                    if (result == no_memory)
+                    {
+                        free(temp);
+                        temp = NULL;
+                        va_end(arguments);
+                        return result;
+                    }
+                    if (result == incorrect_input)
+                    {
+                        free(temp);
+                        temp = NULL;
+                        va_end(arguments);
+                        return result;
+                    }
+                    symbols_count += result;
 
-                i += 3;
-                j = 0;
+                    i += 3;
+                    j = 0;
+                }
 
                 // очистить временную строку
 
@@ -461,18 +234,6 @@ int overfprintf(FILE *stream, const char *format, ...)
                 {
                     temp[i] = 0;
                 }
-                // free(temp);
-                // temp = NULL;
-                // temp = (char*)malloc(length * sizeof(char));
-                // if (temp == NULL)
-                // {
-                //     ///////// СЮДА ЗАХОДИТ????
-                //     printf("\n%d\n", strlen(format));
-                //     free(temp);
-                //     temp = NULL;
-                //     va_end(arguments);
-                //     return no_memory;
-                // }
             }
             else count++;
         }
@@ -482,6 +243,133 @@ int overfprintf(FILE *stream, const char *format, ...)
     }
     if (j != 0)
     {
+        temp[j] = '\0';
+        result = vfprintf(stream, temp, arguments);
+        if (result < 0)
+        {
+            free(temp);
+            temp = NULL;
+            va_end(arguments);
+            return fail;
+        }
+    }
+    free(temp);
+    temp = NULL;
+    
+    rewind(stream);
+    char symbol;
+    int i = 0;
+    while ((symbol = fgetc(stream)) != EOF)
+    {
+        buffer[i] = symbol;
+        i++;
+    }
+    buffer[i] = '\0';
+    fclose(stream);
+    remove("tmpfile");
+
+    va_end(arguments);
+    return success;
+}
+
+int overfprintf(FILE *stream, const char *format, ...)
+{
+    if (!stream) return incorrect_input;
+    va_list arguments;
+    va_start(arguments, format);
+
+    int* ptr;
+
+    int length = strlen(format);
+    if (!length) return incorrect_input;
+
+    char *temp = (char*)malloc((length + 1) * sizeof(char));
+    if (temp == NULL)
+    {
+        va_end(arguments);
+        return no_memory;
+    }
+
+    int result;
+    int count = 0;
+    int j = 0;
+    int symbols_count = 0;
+    for (int i = 0; i < length; ++i)
+    {
+        if (format[i] == '%')
+        {
+            if ((check_is_flag(format[i + 1], format[i + 2]) == success) || format[i + 1] == 'n')
+            {
+                if (i != 0)
+                {
+                    temp[j] = '\0';
+                    result = vfprintf(stream, temp, arguments);
+                    if (result < 0)
+                    {
+                        free(temp);
+                        temp = NULL;
+                        va_end(arguments);
+                        return fail;
+                    }
+                    symbols_count += result;
+                    j = 0;
+                    for (int k = 0; k < count; ++k)
+                    {
+                        while (temp[j] != '%') j++;
+                        j++;
+                        while (temp[j] != ' ' && temp[j] != '%' && temp[j] != '\0' && temp[j] != '\n' && temp[j] != '\t') j++;
+
+                        if (temp[j - 1] == 'f') va_arg(arguments, double);
+                        else va_arg(arguments, void*);
+                    }
+                }
+                count = 0;
+                if (format[i + 1] == 'n')
+                {
+                    ptr = va_arg(arguments, int*);
+                    *ptr = i;
+                    i++;
+                }
+                else
+                {
+                    // распечатать штуку по флагу
+                    result = print_my_flags(stream, &arguments, format[i + 1], format[i + 2]);
+                    if (result == no_memory)
+                    {
+                        free(temp);
+                        temp = NULL;
+                        va_end(arguments);
+                        return result;
+                    }
+                    if (result == incorrect_input)
+                    {
+                        free(temp);
+                        temp = NULL;
+                        va_end(arguments);
+                        return result;
+                    }
+                    symbols_count += result;
+
+                    i += 3;
+                    j = 0;
+                }
+
+                // очистить временную строку
+
+                for (int i = 0; i <= length; ++i)
+                {
+                    temp[i] = 0;
+                }
+            }
+            else count++;
+        }
+        // добавление в строку
+        temp[j] = format[i];
+        j++;
+    }
+    if (j != 0)
+    {
+        temp[j] = '\0';
         result = vfprintf(stream, temp, arguments);
         if (result < 0)
         {
@@ -508,6 +396,8 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
     double number3;
     float number4;
     char *string;
+
+    char answer2[256];
     switch (flag1)
     {
         case 'R':
@@ -518,7 +408,14 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
                 answer = NULL;
                 return no_memory;
             }
-            fprintf(stream, "%s", answer);
+            result = fprintf(stream, "%s", answer);
+            if (result < 0)
+            {
+                free(answer);
+                answer = NULL;
+                return incorrect_input;
+            }
+            result = strlen(answer);
             free(answer);
             answer = NULL;
             break;
@@ -530,7 +427,14 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
                 answer = NULL;
                 return no_memory;
             }
-            fprintf(stream, "%s", answer);
+            result = fprintf(stream, "%s", answer);
+            if (result < 0)
+            {
+                free(answer);
+                answer = NULL;
+                return incorrect_input;
+            }
+            result = strlen(answer);
             free(answer);
             answer = NULL;
             break;
@@ -547,7 +451,14 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
                         answer = NULL;
                         return no_memory;
                     }
-                    fprintf(stream, "%s", answer);
+                    result = fprintf(stream, "%s", answer);
+                    if (result < 0)
+                    {
+                        free(answer);
+                        answer = NULL;
+                        return incorrect_input;
+                    }
+                    result = strlen(answer);
                     free(answer);
                     answer = NULL;
                     break;
@@ -561,7 +472,14 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
                         answer = NULL;
                         return no_memory;
                     }
-                    fprintf(stream, "%s", answer);
+                    result = fprintf(stream, "%s", answer);
+                    if (result < 0)
+                    {
+                        free(answer);
+                        answer = NULL;
+                        return incorrect_input;
+                    }
+                    result = strlen(answer);
                     free(answer);
                     answer = NULL;
                     break;
@@ -571,15 +489,19 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
             string = va_arg(*arguments, char*);
             result = va_arg(*arguments, int);
             result = get_decimal_number(string, result);
-            fprintf(stream, "%d", result);
-            result = success;
+            result = fprintf(stream, "%d", result);
+            if (result < 0) return incorrect_input;
+            sprintf(answer2, "%d", result);
+            result = strlen(answer2);
             break;
         case 'T':
             string = va_arg(*arguments, char*);
             result = va_arg(*arguments, int);
             result = get_decimal_number(string, result);
-            fprintf(stream, "%d", result);
-            result = success;
+            result = fprintf(stream, "%d", result);
+            if (result < 0) return incorrect_input;
+            sprintf(answer2, "%d", result);
+            result = strlen(answer2);
             break;
         case 'm':
             switch (flag2)
@@ -595,9 +517,22 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
                     }
                     for (int i = 0; i < 8 * sizeof(signed int); ++i)
                     {
-                        if (i % 8 == 0) fprintf(stream, " ");
-                        fprintf(stream, "%u", answer1[i]);
+                        if (i % 8 == 0) result = fprintf(stream, " ");
+                        if (result < 0)
+                        {
+                            free(answer1);
+                            answer1 = NULL;
+                            return incorrect_input;
+                        }
+                        result = fprintf(stream, "%u", answer1[i]);
+                        if (result < 0)
+                        {
+                            free(answer1);
+                            answer1 = NULL;
+                            return incorrect_input;
+                        }
                     }
+                    result = strlen(answer1);
                     free(answer1);
                     answer1 = NULL;
                     break;
@@ -612,9 +547,22 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
                     }
                     for (int i = 0; i < 8 * sizeof(unsigned int); ++i)
                     {
-                        if (i % 8 == 0) fprintf(stream, " ");
-                        fprintf(stream, "%u", answer1[i]);
+                        if (i % 8 == 0) result = fprintf(stream, " ");
+                        if (result < 0)
+                        {
+                            free(answer1);
+                            answer1 = NULL;
+                            return incorrect_input;
+                        }
+                        result = fprintf(stream, "%u", answer1[i]);
+                        if (result < 0)
+                        {
+                            free(answer1);
+                            answer1 = NULL;
+                            return incorrect_input;
+                        }
                     }
+                    result = strlen(answer1);
                     free(answer1);
                     answer1 = NULL;
                     break;
@@ -629,9 +577,22 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
                     }
                     for (int i = 0; i < 8 * sizeof(double); ++i)
                     {
-                        if (i % 8 == 0) fprintf(stream, " ");
-                        fprintf(stream, "%u", answer1[i]);
+                        if (i % 8 == 0) result = fprintf(stream, " ");
+                        if (result < 0)
+                        {
+                            free(answer1);
+                            answer1 = NULL;
+                            return incorrect_input;
+                        }
+                        result = fprintf(stream, "%u", answer1[i]);
+                        if (result < 0)
+                        {
+                            free(answer1);
+                            answer1 = NULL;
+                            return incorrect_input;
+                        }
                     }
+                    result = strlen(answer1);
                     free(answer1);
                     answer1 = NULL;
                     break;
@@ -646,9 +607,22 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
                     }
                     for (int i = 0; i < 8 * sizeof(float); ++i)
                     {
-                        if (i % 8 == 0) fprintf(stream, " ");
-                        fprintf(stream, "%u", answer1[i]);
+                        if (i % 8 == 0) result = fprintf(stream, " ");
+                        if (result < 0)
+                        {
+                            free(answer1);
+                            answer1 = NULL;
+                            return incorrect_input;
+                        }
+                        result = fprintf(stream, "%u", answer1[i]);
+                        if (result < 0)
+                        {
+                            free(answer1);
+                            answer1 = NULL;
+                            return incorrect_input;
+                        }
                     }
+                    result = strlen(answer1);
                     free(answer1);
                     answer1 = NULL;
                     break;
@@ -658,7 +632,6 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
     return result;
 }
 
-// максимальное число, которое может быть записано в виде римских цифр, - 3999
 int print_roman(char **answer, int number)
 {
     int length = 1;
@@ -822,8 +795,8 @@ int getlen(int number, int base)
 int get_decimal_number(char* number, int base)
 {
     int result = 0;
-    char *ptr = number - 1;
     int flag = 0;
+    char * ptr = number - 1;
     if (*(++ptr) == '-') flag = 1;
     else --ptr;
 
