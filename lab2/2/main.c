@@ -21,7 +21,8 @@ double quick_pow(double number, int power);
 
 int main()
 {
-    int quantity = 4;
+    // учесть ноль чисел
+    int quantity = 0;
 
     //вывод функции среднего геометрического
     double result_double;
@@ -48,7 +49,7 @@ int main()
 double quick_pow(double number, int power)
 {
     if (power == 0) return 1.0;
-    if (number == 0.0) return number;
+    if (number == 0.0) return number; // неопределенность
 
     double temp;
     if (power % 2 == 0)
@@ -63,7 +64,7 @@ double quick_pow(double number, int power)
     }
     else
     {
-        temp = quick_pow(number, ((-1) * power)/2);
+        temp = quick_pow(number, (-power)/2);
         return 1.0 / (temp * temp * number);
     }
 }

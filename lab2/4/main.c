@@ -27,10 +27,10 @@ int main()
     // int result = check_polygon(3, first, second, third);
 
     // невыпуклый многоугольник
-    double first[] = {0.0, 1.0};
-    double second[] = {0.0, 0.0};
-    double third[] = {-3.0, -1.0};
-    double forth[] = {5.0, -3.0};
+    double first[] = {1.0, 1.0};
+    double second[] = {0.0, 1.0};
+    double third[] = {0.0, 0.0};
+    double forth[] = {1.0, 0.0};
     int result = check_polygon(4, first, second, third, forth);
 
     if (result == incorrect_input)
@@ -46,9 +46,9 @@ int main()
 
     ////многочлен
     double x = 2;
-    int power = -4;
+    int power = 3;
     double double_result;
-    result = find_polynomial(&double_result, x, power, 0.5, 1.0, 2.4, 5.1, 0.5);
+    result = find_polynomial(&double_result, x, power, 1.0, 1.0, 3.0, 3.0);
     if (result == incorrect_input) print_error(result);
     else printf("\nResult for polynomial: %f\n", double_result);
 

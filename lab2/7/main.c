@@ -219,10 +219,11 @@ double function_ln(double x)
 
 double random_function(double x)
 {
-    return x * x * x + 4 * x - 3;
+    return x * x - 2;
 }
 
 // метод половинного деления
+// валидация на уровне функции
 int dichotomy(double *result, double a, double b, double eps, double (*function)(double))
 {
     double a_result = function(a);

@@ -26,7 +26,7 @@ int function_u(char **new_string, char *string);
 int function_n(char **new_string, char *string);
 
 // замена strlen мда :)
-int get_size(char *string);
+int get_size(const char *string);
 
 int main(int argc, char *argv[])
 {
@@ -262,15 +262,14 @@ int is_number(char *number)
     return success;
 }
 
-int get_size(char *string)
+int get_size(const char *string)
 {
-    int size = 0;
+    char const *start = string;
     while (*string != '\0')
     {
-        size++;
         string++;
     }
-    return size;
+    return string - start;
 }
 
 //конкатенация - склеивание строк
