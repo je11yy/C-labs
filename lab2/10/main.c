@@ -19,28 +19,36 @@ int main()
 {
     int power = 3;
     double eps = 0.0001;
-    double a = 0;
+    double a = 2;
     double * odds = NULL;
     
-    int result = polynomial_decomposition(&odds, eps, a, power, 2.36, -0.579, 1.025, -5.4);
+    int result = polynomial_decomposition(&odds, eps, a, power, 2.36, 1.0, 1.025, -5.4);
     if (result == no_memory)
     {
         print_error(result);
         return result;
     }
-    
+
     printf("Result: ");
-    for (int i = 0; i <= power; ++i)
+    int cur_pow;
+    for (int i = 0; i <= abs(power); ++i)
     {
+        if (power < 0) cur_pow = -i;
+        if (odds[i] > -eps && odds[i] < eps) continue;
         if (i != 0)
         {
             if (odds[i] < eps) printf(" - ");
             else printf(" + ");
         }
-        printf("%.3f", fabs(odds[i]));
-        if (a > -eps && a < eps) printf(" * x");
+        if (i == 0) printf("%.3f", odds[i]);
+        else printf("%.3f", fabs(odds[i]));
+        if (i == 0) continue;
+        if (a > -eps && a < eps && i == 1) printf(" * x");
+        else if (a > -eps && a < eps) printf(" * x^%d", cur_pow);
         else if (a < eps) printf(" * (x + %.1f)", fabs(a));
-        else printf(" * (x - %.1f)", a);
+        else if (a < eps) printf(" * (x + %.1f)^%d", fabs(a), cur_pow);
+        else if (i == 1) printf(" * (x - %.1f)", a);
+        else printf(" * (x - %.1f)^%d", a, cur_pow);
     }
     printf("\n");
     printf("\nProgram has finished correctly.\n");
@@ -74,6 +82,7 @@ int polynomial_decomposition(double ** result, double epsilon, double a, int pow
     va_list odds;
     va_start(odds, power);
     double odd;
+    if (power < 0) power = abs(power);
 
     double * odds_list = (double*)malloc((power + 1) * sizeof(double));
     double * temp;
