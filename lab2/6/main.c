@@ -23,6 +23,7 @@ int get_value_roman(char symbol);
 int get_roman(char * string);
 unsigned int get_zeckendorf(char * string);
 int get_decimal_number(char* number, int base);
+int oversscanf(char * buffer, const char * format, ...);
 
 int main()
 {
@@ -35,6 +36,12 @@ int main()
     double number_double;
     char string[10];
     int result = overfscanf(file, "%d %lf %s", &number, &number_double, &string);
+    if (result == fail)
+    {
+        print_error(result);
+        fclose(file);
+        return result;
+    }
     if (result == no_memory)
     {
         print_error(result);
@@ -43,6 +50,12 @@ int main()
     }
     printf("\n  test 1\nresult: %d\nnumber: %d\ndouble: %lf\nstring: %s\n", result, number, number_double, string);
     result = overfscanf(file, "%Ro %Zr %CV %Cv", &number, &number_unsigned, &number1, base, &number2, base);
+    if (result == fail)
+    {
+        print_error(result);
+        fclose(file);
+        return result;
+    }
     if (result == no_memory)
     {
         print_error(result);
@@ -51,9 +64,115 @@ int main()
     }
     printf("\n  test2\nresult: %d\nroman: %d\nzeckendorf: %d\n", result, number, number_unsigned);
     printf("to decimal high: %d\nto decimal low: %d\n", number1, number2);
+    char * buffer = "XV 3 10010011";
+    result = oversscanf(buffer, "%Ro %d %Zr", &number, &number1, &number_unsigned);
+    if (result == fail)
+    {
+        print_error(result);
+        fclose(file);
+        return result;
+    }
+    if (result == no_memory)
+    {
+        print_error(result);
+        fclose(file);
+        return result;
+    }
+    printf("\n  test3\nresult: %d\nroman: %d\nint: %d\n%zeckendorf: %d\n", result, number, number1, number_unsigned);
     printf("\nThe program has finished correctly.\n");
     fclose(file);
     return success;
+}
+
+int oversscanf(char * buffer, const char * format, ...)
+{
+    int len = strlen(buffer);
+    if (len == 0) return 0;
+
+    FILE * stream = tmpfile();
+    if (!stream) return incorrect_input;
+    int i = 0;
+    while (buffer[i] != '\0')
+    {
+        fputc(buffer[i], stream);
+        i++;
+    }
+    rewind(stream);
+
+    int number_of_scanfed = 0;
+    va_list arguments;
+    va_start(arguments, format);
+    int length = strlen(format);
+    char * string = (char*)format;
+    char * temp = (char*)malloc((length + 1) * sizeof(char));
+    if (temp == NULL)
+    {
+        va_end(arguments);
+        return no_memory;
+    }
+    for (int i = 0; i <= length; ++i) temp[i] = 0;
+    char flag[] = {'1', '1', '\0'};
+    int count = 0, temp_count = 0;
+    int result;
+    void * nomatter_flag;
+    for (int i = 0; i < length; ++i)
+    {
+        if (format[i] == '%')
+        {
+            flag[0] = format[i + 1];
+            flag[1] = format[i + 2];
+            if (in_flags(flag) == success)
+            {
+                if (temp_count != 0)
+                {
+                    temp[temp_count] = 0;
+                    result = vfscanf(stream, temp, arguments);
+                    if (result == EOF)
+                    {
+                        free(temp);
+                        temp = NULL;
+                        return fail;
+                    }
+                    count += result;
+                    for (int j = 0; j < result; ++j) nomatter_flag = va_arg(arguments, void*);
+                }
+                result = scan_my_flags(stream, flag, &arguments);
+                count++;
+                if (result == no_memory)
+                {
+                    free(temp);
+                    temp = NULL;
+                    return result;
+                }
+
+                for (int j = 0; j <= length; ++j) temp[j] = 0;
+                temp_count = 0;
+                i += 3;
+            }
+        }
+        temp[temp_count] = format[i];
+        temp_count++;
+    }
+    if (temp_count != 0)
+    {
+        temp[temp_count] = 0;
+        result = vfscanf(stream, temp, arguments);
+        if (result < 0)
+        {
+            free(temp);
+            temp = NULL;
+            return fail;
+        }
+        count += result;
+    }
+    free(temp);
+    temp = NULL;
+
+    fclose(stream);
+    remove("tmpfile");
+
+    va_end(arguments);
+    return count;
 }
 
 int overfscanf(FILE * stream, const char * format, ...)
