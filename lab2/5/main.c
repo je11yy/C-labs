@@ -47,7 +47,7 @@ int oversprintf(char * buffer, const char *format, ...);
 int main()
 {
     int count = 0;
-    int result = overfprintf(stdout, "dhdh%n %d\n\t7%d\n", &count, 3, 8);
+    int result = overfprintf(stdout, "\t ans");
     printf("%d\n", count);
     if (result == incorrect_input)
     {
@@ -99,7 +99,7 @@ int main()
         return result;
     }
 
-    signed int mi = +136;
+    signed int mi = 136;
     unsigned int mu = 136;
     double md = 136.0;
     float mf = 136.0;
@@ -402,11 +402,11 @@ int print_my_flags(FILE * stream, va_list *arguments, char flag1, char flag2)
     {
         case 'R':
             result = print_roman(&answer, va_arg(*arguments, int));
-            if (result == no_memory)
+            if (result != success)
             {
                 free(answer);
                 answer = NULL;
-                return no_memory;
+                return result;
             }
             result = fprintf(stream, "%s", answer);
             if (result < 0)

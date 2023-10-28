@@ -22,7 +22,7 @@ int main()
     double a = 2;
     double * odds = NULL;
     
-    int result = polynomial_decomposition(&odds, eps, a, power, 2.36, 1.0, 1.025, -5.4);
+    int result = polynomial_decomposition(&odds, eps, a, power, 0.33, -1.1, 1.025, -5.4);
     if (result == no_memory)
     {
         print_error(result);
@@ -34,6 +34,7 @@ int main()
     for (int i = 0; i <= abs(power); ++i)
     {
         if (power < 0) cur_pow = -i;
+        else cur_pow = i;
         if (odds[i] > -eps && odds[i] < eps) continue;
         if (i != 0)
         {
@@ -85,11 +86,18 @@ int polynomial_decomposition(double ** result, double epsilon, double a, int pow
     if (power < 0) power = abs(power);
 
     double * odds_list = (double*)malloc((power + 1) * sizeof(double));
+    if (odds_list == NULL)
+    {
+        va_end(odds);
+        return no_memory;
+    }
     double * temp;
     double function_result;
     double * result_odds_list = (double*)malloc((power + 1) * sizeof(double));
     if (result_odds_list == NULL)
     {
+        free(odds_list);
+        odds_list = NULL;
         va_end(odds);
         return no_memory;
     }

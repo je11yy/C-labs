@@ -27,6 +27,9 @@ int oversscanf(char * buffer, const char * format, ...);
 
 int main()
 {
+    int a = 0;
+    int b = overfscanf(stdin, "");
+    printf("%d %d\n", b, a);
     FILE * file = fopen("file.txt", "r");
     int number;
     int number1;

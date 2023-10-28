@@ -25,7 +25,7 @@ int main()
     char *answer = NULL;
     double eps = 0.00001;
     // разложить на множители систему счисления и чисел
-    int result = check_final_representation(&answer, eps, 8, 0.125, 0.17, 0.5, eps);
+    int result = check_final_representation(&answer, eps, 3, 0.1, eps);
     if (result == incorrect_input)
     {
         print_error(result);
@@ -173,9 +173,8 @@ int final_representation(double eps, int base, double number)
         max_iterations++;
     }
     int full_fraction = (int) whole;
-    printf("fraction %d\n", full_fraction);
     int denominator = get_denominator(full_fraction);
-    printf("denominator %d\n", denominator);
+
     int result = has_final_representation(denominator, base);
     return result;
 }

@@ -22,7 +22,8 @@ int main()
 {
     char *result = NULL;
     
-    int res = summary_any_numbers(&result, 10, "89", "12", NULL);
+    int res = summary_any_numbers(&result, 7, "005", "132222", NULL);
+
     if (res == incorrect_input)
     {
         print_error(res);
@@ -63,6 +64,11 @@ int summary_any_numbers(char **result, int base, ...)
     va_start(numbers, base);
     int length = 1;
     *result = (char*)malloc((length + 1) * sizeof(char));
+    if (*result == NULL)
+    {
+        va_end(numbers);
+        return no_memory;
+    }
     (*result)[0] = '0';
     (*result)[length] = '\0';
 
@@ -156,6 +162,7 @@ int summary_two_numbers(char **first, char *second, int base)
     }
     return success;
 }
+
 
 void print_error(int error)
 {
