@@ -1,139 +1,183 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <string.h>
+#include <math.h>
 
-enum ERRORS
+enum RESULT
 {
     success = 0,
-    incorrect_input = -1,
-    file_error = -2,
-    no_memory = -3,
-    file_input_error = -4,
-    can_not_calculate = -5,
-    wrong = -6
+    fail = -1,
+    incorrect_input = -2,
+    no_memory = -3
 };
 
-void make_vector(double *new_coord, double *coord_first, double *coord_second);
-int check_polygon(int quantity, ...);
+int final_representation(double eps, int base, double number);
+int check_final_representation(char **answer, double eps, int base, ...);
+int append_string(char **answer, int *length, char *string);
+int add_to_answer(char **answer, int length, double number, int base, int result);
 void print_error(int error);
-int find_polynomial(double *final_result, double x, int power, ...);
+int has_final_representation(int number, int base);
+int get_denominator(int number);
 
 int main()
 {
-    // треугольник
-    // double first[] = {-1.0, -1.0};
-    // double second[] = {1.0, -1.0};
-    // double third[] = {0.0, 2.0};
-    // int result = check_polygon(3, first, second, third);
-
-    // невыпуклый многоугольник
-    double first[] = {1.0, 1.0};
-    double second[] = {0.0, 1.0};
-    double third[] = {0.0, 0.0};
-    double forth[] = {1.0, 0.0};
-    int result = check_polygon(4, first, second, third, forth);
-
+    char *answer = NULL;
+    double eps = 0.00001;
+    // разложить на множители систему счисления и чисел
+    int result = check_final_representation(&answer, eps, 10, 0.37, eps);
     if (result == incorrect_input)
     {
         print_error(result);
+        free(answer);
         return result;
     }
-    if (result == wrong)
+    if (result == no_memory)
     {
-        printf("The polygon is not convex.\n");
+        print_error(no_memory);
+        free(answer);
+        return result;
     }
-    else printf("The polygon is convex.\n");
-
-    ////многочлен
-    double x = 2;
-    int power = 3;
-    double double_result;
-    result = find_polynomial(&double_result, x, power, 1.0, 1.0, 3.0, 3.0);
-    if (result == incorrect_input) print_error(result);
-    else printf("\nResult for polynomial: %f\n", double_result);
-
-    printf("\nThe program has finished correctly.\n");
+    printf("%s\n", answer);
+    printf("Program has finished correctly.\n");
     return success;
 }
 
-// схема горнера
-int find_polynomial(double *final_result, double x, int power, ...)
+int check_final_representation(char **answer, double eps, int base, ...)
 {
-    va_list odds;
-    va_start(odds, power);
-    double odd = va_arg(odds, double);
-    double result = odd;
-    if (power >= 0)
+    if (base < 2 || base > 36) return incorrect_input;
+    va_list numbers;
+    va_start(numbers, base);
+    double number;
+
+    int result;
+    int length = 0;
+    while ((number = va_arg(numbers, double)) != eps)
     {
-        for (int i = 0; i < power; ++i)
+        if (number < eps || (number -1) > eps)
         {
-            odd = va_arg(odds, double);
-            result = result * x + odd;
+            va_end(numbers);
+            return incorrect_input;
         }
+        result = final_representation(eps, base, number);
+        length = add_to_answer(answer, length, number, base, result);
+    }
+    va_end(numbers);
+    return success;
+}
+
+int append_string(char **answer, int *length, char *string)
+{
+    int len = strlen(string);
+    char *temp = (char*)realloc(*answer, (*length + len + 1) * sizeof(char));
+    if (temp == NULL)
+    {
+        free(*answer);
+        *answer = NULL;
+        return no_memory;
+    }
+    *answer = temp;
+
+    for (int i = *length, j = 0; i < *length + len, j < len; ++i, ++j)
+    {
+        (*answer)[i] = string[j];
+    }
+    (*answer)[*length + len] = '\0';
+    *length += len;
+    return success;
+}
+
+int add_to_answer(char **answer, int length, double number, int base, int result)
+{
+    char number_string[16];
+    sprintf(number_string, "%.20f", number);
+    char base_string[3];
+    itoa(base, base_string, 10);
+
+    int res = append_string(answer, &length, "The number ");
+    if (res == no_memory) return no_memory;
+    res = append_string(answer, &length, number_string);
+    if (res == no_memory) return no_memory;
+    res = append_string(answer, &length, " in base ");
+    if (res == no_memory) return no_memory;
+    res = append_string(answer, &length, base_string);
+    if (res == no_memory) return no_memory;
+    if (result == success)
+    {
+        res = append_string(answer, &length, " has a final representation.\n\n");
+        if (res == no_memory) return no_memory;
     }
     else
     {
-        if (x == 0.0) return incorrect_input;
-        for (int i = 0; i > power; --i)
+        res = append_string(answer, &length, " doesnt have a final representation.\n\n");
+        if (res == no_memory) return no_memory;
+    }
+    return length;
+}
+
+int get_denominator(int number)
+{
+    int size = 256;
+    char buffer[size];
+    sprintf(buffer, "%d", number);
+    int length = strlen(buffer);
+    int denominator = 1; // знаменатель
+    for (int i = 0; i < length; ++i) denominator *= 10;
+    //будем сокращать дробь, где number - числитель, denominator - знаменатель
+    while (number % 2 == 0 && denominator % 2 == 0)
+    {
+        number /= 2;
+        denominator /= 2;
+    }
+    for (int i = 3; i < sqrt(number); i += 2)
+    {
+        while (number % i == 0 && denominator % i == 0)
         {
-            odd = va_arg(odds, double);
-            result = result / x + odd;
+            number /= i;
+            denominator /= i;
         }
     }
-    va_end(odds);
-    *final_result = result;
+    if (number > 2) if (denominator % number == 0)  denominator /= number;
+    return denominator;
+}
+
+// если основание делится на каждое из простых делителей знаменателя, то число имеет конечное представление
+int has_final_representation(int number, int base)
+{
+    while (number % 2 == 0)
+    {
+        if (base % 2 != 0) return fail;
+        number /= 2;
+    }
+    for (int i = 3; i < sqrt(number) + 1; i += 2)
+    {
+        while (number % i == 0)
+        {
+            if (base % i != 0) return fail;
+            number /= i;
+        }
+    }
+    if (number > 2) if (base % number != 0) return fail;
     return success;
 }
 
-void make_vector(double *new_coord, double *coord_first, double *coord_second)
+int final_representation(double eps, int base, double number)
 {
-    for (int i = 0; i < 2; ++i)
+    double whole;
+    double fractional = modf(number, &whole);
+    int max_iterations = 0;
+    while (fractional > eps && max_iterations < 9)
     {
-        new_coord[i] = coord_second[i] - coord_first[i];
+        number *= 10;
+        fractional = modf(number, &whole);
+        max_iterations++;
     }
-}
+    int full_fraction = (int) whole;
+    int denominator = get_denominator(full_fraction);
+    printf("%d %d\n", full_fraction, denominator);
 
-// на вход подаются даблвские массивы
-int check_polygon(int quantity, ...)
-{
-    if (quantity <= 2) return incorrect_input;
-    
-    va_list coordinats;
-    va_start(coordinats, quantity);
-    double *first_coords = va_arg(coordinats, double*);
-    double *coords = first_coords;
-    double *new_coords;
-
-    double vector[] = {0, 0};
-    double prev_vector[] = {0, 0};
-
-    double value, prev_value;
-    for (int i = 0; i < quantity - 1; ++i)
-    {
-        new_coords = va_arg(coordinats, double*);
-        make_vector(vector, coords, new_coords);
-        if (i == 1)
-        {
-            value = vector[0] * prev_vector[1] - vector[1] * prev_vector[0];
-            prev_value = value;
-        }
-        else if (i > 1)
-        {
-            value = vector[0] * prev_vector[1] - vector[1] * prev_vector[0];
-            if (value * prev_value < 0) return wrong;
-            prev_value = value;
-        }
-        prev_vector[0] = vector[0];
-        prev_vector[1] = vector[1];
-        coords[0] = new_coords[0];
-        coords[1] = new_coords[1];
-    }
-    make_vector(vector, coords, first_coords);
-    value = vector[0] * prev_vector[1] - vector[1] * prev_vector[0];
-    if (value * prev_value < 0) return wrong;
-    prev_value = value;
-    va_end(coordinats);
-    return success;
+    int result = has_final_representation(denominator, base);
+    return result;
 }
 
 void print_error(int error)
@@ -141,19 +185,10 @@ void print_error(int error)
     switch(error)
     {
         case incorrect_input:
-            printf("\nIncorrect input.\n");
-            break;
-        case file_error:
-            printf("\nCannot open file.\n");
+            printf("Incorrect input.\n");
             break;
         case no_memory:
-            printf("\nComputer doesnot have enough memory for this calculation.\n");
-            break;
-        case file_input_error:
-            printf("\nError with file contents.\n");
-            break;
-        case can_not_calculate:
-            printf("\nCannot calculate.\n");
+            printf("Computer doesnot have enough memory for this calculation.\n");
             break;
     }
 }
