@@ -106,8 +106,8 @@ int number_to_base(char ** result, int number, int r)
         number = abs(number);
     }
 
-    int length = 1;
-    *result = (char*)malloc((length + 1) * sizeof(char)); // максимальный размер 2^5
+    int length = 2;
+    *result = (char*)malloc(length * sizeof(char)); // максимальный размер 2^5
     if (*result == NULL) return no_memory;
     char * temp;
 
@@ -122,18 +122,19 @@ int number_to_base(char ** result, int number, int r)
         {
             length *= 2;
             temp = (char*)realloc(*result, length * sizeof(char));
-            if (temp == NULL)
+            if (!temp)
             {
-                (*result)[count] = 0;
                 free(*result);
-                *result = NULL;
+                result = NULL;
                 return no_memory;
             }
+            *result = temp;
         }
         remainder = number & bit_size; // остаток от деления
 
         symbol = make_char_number(remainder);
         (*result)[count] = symbol;
+
         number = number >> r; // делим число на r-ую степень двойки
         count++;
     }
@@ -143,12 +144,13 @@ int number_to_base(char ** result, int number, int r)
         {
             length *= 2;
             temp = (char*)realloc(*result, length * sizeof(char));
-            if (temp == NULL)
+            if (!temp)
             {
                 free(*result);
-                *result = NULL;
+                result = NULL;
                 return no_memory;
             }
+            *result = temp;
         }
         (*result)[count] = '-';
         count++;
