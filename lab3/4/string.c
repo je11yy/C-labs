@@ -114,6 +114,13 @@ String_ptr concatenation(const String_ptr first, const String_ptr second)
     memcpy(buffer + first -> length, second -> buffer, second -> length);
 
     String_ptr string = create_string(buffer);
-    if (!string) return NULL;
+    if (!string)
+    {
+        free(buffer);
+        buffer = NULL;
+        return NULL;
+    }
+    free(buffer);
+    buffer = NULL;
     return string;
 }
