@@ -40,6 +40,7 @@ int main()
         }
         else if (result == 0) result = -1;
         printf("\n\nSomething went wrong! Try again.\n");
+        fflush(stdin);
         printf("Input form: ");
     }
 
@@ -66,14 +67,14 @@ int main()
         }
     }
 
-    delete_post(post);
+    delete_post(post, length);
 
     printf("\n\nProgram has finished correctly.\n");
 }
 
 int do_command(int command, Post_ptr post, int * length)
 {
-    int result;
+    int result = 0;
     switch (command)
     {
         case 1:
@@ -105,7 +106,10 @@ void delete_mail_with_ind(Post_ptr post, int *length)
     while (result != success)
     {
         result = scanf("%s", indef);
-        if (result <= 0) result = -1;
+        if (result <= 0)
+        {
+            printf("\nTry again: ");
+        }
         else
         {
             if (strlen(indef) == 14) result = validate_string_digits(indef);
@@ -117,8 +121,7 @@ void delete_mail_with_ind(Post_ptr post, int *length)
             }
         }
     }
-    int index = find_with_post_index(post -> mails, indef, *length);
-    delete_mail((post -> mails)[index]);
+    remove_mail(&post, result, *length);
     (*length)--;
 }
 
@@ -141,6 +144,7 @@ int mail(Post_ptr post, int * length)
             if (result == success) break;
         }
         else if (result == 0) result = -1;
+        fflush(stdin);
         printf("\n\nSomething went wrong! Try again.\n");
         printf("Input form: ");
     }
@@ -159,6 +163,7 @@ int mail(Post_ptr post, int * length)
             if (result == success) break;
         }
         else if (result == 0) result = -1;
+        fflush(stdin);
         printf("Something went wrong! Try again.\n");
         printf("Input form: ");
     }
@@ -178,6 +183,7 @@ int mail(Post_ptr post, int * length)
     }
     while (result != success)
     {
+        fflush(stdin);
         printf("\n\nSomething went wrong! Try again.\n");
         printf("Input form: ");
         result = scanf("%s", post_index);
@@ -206,6 +212,7 @@ int mail(Post_ptr post, int * length)
     while (result != success)
     {
         printf("\n\nSomething went wrong! Try again.\n");
+        fflush(stdin);
         printf("Input form: ");
         result = scanf("%d:%d:%d %d:%d:%d", &day, &month, &year, &hours, &minutes, &seconds);
         if (result)
@@ -237,6 +244,7 @@ int mail(Post_ptr post, int * length)
     while (result != success)
     {
         printf("\n\nSomething went wrong! Try again.\n");
+        fflush(stdin);
         printf("Input form: ");
         result = scanf("%d:%d:%d %d:%d:%d", &day, &month, &year, &hours, &minutes, &seconds);
         if (result == 0) result = -1;
@@ -256,7 +264,7 @@ int mail(Post_ptr post, int * length)
     Adress_ptr adress = create_adress(town, street, building, housing, apartment, index);
     if (adress == NULL)
     {
-        delete_post(post);
+        delete_post(post, *length);
         return no_memory;
     }
 
@@ -264,7 +272,7 @@ int mail(Post_ptr post, int * length)
     if (mail == NULL)
     {
         delete_adress(adress);
-        delete_post(post);
+        delete_post(post, *length);
         return no_memory;
     }
     ///////
@@ -273,7 +281,7 @@ int mail(Post_ptr post, int * length)
     if (result == no_memory)
     {
         delete_mail(mail);
-        delete_post(post);
+        delete_post(post, *length);
         return no_memory;
     }
     printf("\n\nThe mail was created!\n");
@@ -305,6 +313,7 @@ int menu()
     printf("Input form: ");
     while (!scanf("%d", &command))
     {
+        fflush(stdin);
         printf("\n\nTry again!\n");
         printf("Input form: ");
     }

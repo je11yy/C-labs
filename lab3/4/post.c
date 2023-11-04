@@ -296,7 +296,7 @@ int append_mail(Mail_ptr mail, Post_ptr post, int length)
     temp = (Mail_array)realloc(post -> mails, (length + 1) * sizeof(Mail_ptr));
     if (!temp)
     {
-        delete_post(post);
+        delete_post(post, length);
         delete_mail(mail);
         return no_memory;
     }
@@ -306,24 +306,28 @@ int append_mail(Mail_ptr mail, Post_ptr post, int length)
 }
 
 // удаление по индексу
-int remove_mail(Post_ptr post, int index, int length)
+int remove_mail(Post_ptr * post, int index, int length)
 {
-    Mail_ptr temp_mail = (post -> mails)[index];
-    print_mail_info(temp_mail);
-    printf("\n\nindex: %d length: %d\n\n", index, length);
+    Mail_ptr temp_mail = ((*post) -> mails)[index];
     for (int i = index; i < length - 1; ++i)
     {
-        (post -> mails)[i] = (post -> mails)[i + 1];
+        ((*post) -> mails)[i] = ((*post) -> mails)[i + 1];
     }
+    ((*post) -> mails)[length - 1] = NULL;
     delete_mail(temp_mail);
     length--;
-    Mail_array temp = (Mail_array)realloc(post -> mails, length);
+    if (length == 0)
+    {
+        free((*post) -> mails);
+        (*post) -> mails = NULL;
+    }
+    Mail_array temp = (Mail_array)realloc((*post) -> mails, length * sizeof(Mail_ptr));
     if (!temp)
     {
-        delete_post(post);
+        delete_post(*post, length);
         return no_memory;
     }
-    post -> mails = temp;
+    (*post) -> mails = temp;
     return success;
 }
 
@@ -347,12 +351,9 @@ void delete_mail(Mail_ptr mail)
     mail = NULL;
 }
 
-void delete_post(Post_ptr post)
+void delete_post(Post_ptr post, int length)
 {
     delete_adress(post -> post_adress);
-    int length;
-    if (post -> mails != NULL) length = sizeof(post -> mails) / sizeof((post -> mails)[0]);
-    else length = 0;
     for (int i = 0; i < length; ++i)
     {
         delete_mail((post -> mails)[i]);

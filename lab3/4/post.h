@@ -37,7 +37,7 @@ Adress_ptr create_adress(char * town, char * street, unsigned int building, char
 Mail_ptr create_mail(Adress_ptr adress, double weight, char * post_index, char * create_time, char * time_take);
 
 //delete
-void delete_post(Post_ptr post);
+void delete_post(Post_ptr post, int length);
 void delete_mail(Mail_ptr mail);
 void delete_adress(Adress_ptr adress);
 
@@ -53,7 +53,7 @@ int check_lowercase(char * string);
 // appending and deleting mails in post
 int append_mail(Mail_ptr mail, Post_ptr post, int length);
 void insert_mail(int length, Post_ptr post, Mail_ptr mail);
-int remove_mail(Post_ptr post, int index, int length);
+int remove_mail(Post_ptr * post, int index, int length);
 
 // time functions
 int check_time(String_ptr time_input);

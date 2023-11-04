@@ -20,7 +20,7 @@ enum COMPARISON
 // создание строки
 String_ptr create_string(const char * buffer)
 {
-    String_ptr string = (String_ptr) malloc(sizeof(string));
+    String_ptr string = (String_ptr) malloc(sizeof(String));
     if (!string) return NULL;
     string -> length = strlen(buffer);
     string -> buffer = (char*) malloc((string -> length + 1) * sizeof(char));
