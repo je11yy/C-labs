@@ -183,8 +183,9 @@ int replace_words(FILE * file, FILE * output)
             fputc(symbol, output);
             symbol = fgetc(file);
         }
+        free_table(table);
         fclose(file);
-        fclose(output);
+        fclose(output); 
         return success;
     }
     while (symbol != EOF)
