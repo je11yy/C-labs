@@ -42,7 +42,7 @@ int hash_function(char ** hash_result, char * number);
 int get_index(char * hash, int hash_size);
 
 int insert(Hash_table_ptr table, char * definition, char * substitution);
-void insert_in_list(Items_ptr items, Item_ptr item);
+Items_ptr insert_in_list(Items_ptr items, Item_ptr item);
 
 Items_ptr create_item_list();
 Item_ptr create_item(char * definition, char * substitution);

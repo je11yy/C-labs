@@ -214,7 +214,9 @@ int replace_words(FILE * file, FILE * output)
         count++;
         symbol = fgetc(file);
     }
+    printf("%d\n", table -> hash_size);
     free_table(table);
+    printf("HERE\n");
     fclose(file);
     fclose(output);
     return success;
@@ -224,7 +226,6 @@ int check_is_definition(char ** sub, Hash_table_ptr table, char * string, int mi
 {
     char tmp[strlen(string) + 1];
     strcpy(tmp, string);
-
     char * result = NULL;
     int res;
     for (int i = max_len - 1; i >= min_len - 1; --i)

@@ -54,6 +54,26 @@ int get_remainder(char ** result, char * number, int divisor)
         div[size] = res[size];
         size--;
     }
+    if (comparison(number, div) < 0)
+    {
+        free(res);
+        res = NULL;
+        free(preres);
+        preres = NULL;
+        free(div);
+        div = NULL;
+        return atoi(number);
+    }
+    else if (comparison(number, div) == 0)
+    {
+        free(res);
+        res = NULL;
+        free(preres);
+        preres = NULL;
+        free(div);
+        div = NULL;
+        return 0;
+    }
     int tmp;
     char * quotient = (char*)calloc(2, sizeof(char)); // частное
     quotient[0] = '1';

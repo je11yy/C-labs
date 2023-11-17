@@ -25,13 +25,17 @@ int check_table(Hash_table_ptr table)
         if (cur_items)
         {
             cur_item = cur_items -> head;
-            while (cur_item -> next != NULL)
+            if (cur_item)
             {
                 count++;
-                cur_item = cur_item -> next;
+                while (cur_item -> next != NULL)
+                {
+                    cur_item = cur_item -> next;
+                    if (cur_item) count++;
+                }
+                if (count > max_chain && count != 0) max_chain = count;
+                if ((count < min_chain || min_chain == -1) && count != 0) min_chain = count;
             }
-            if (count > max_chain && count != 0) max_chain = count;
-            else if (count < min_chain) min_chain = count;
         }
     }
     if (min_chain == -1) success; // таблица пустая
@@ -44,6 +48,7 @@ int get_new_size(int elements_count)
     /*
     Ищем следующее простое число, начиная с elements_count + 1;
     */
+   elements_count++;
    while (is_prime(elements_count) != success) elements_count++;
    return elements_count;
 }
@@ -51,19 +56,16 @@ int get_new_size(int elements_count)
 int rebuilding_table(Hash_table_ptr table)
 {
     int prev_size = table -> hash_size;
-    table -> hash_size = get_new_size(table -> count);
-    if (prev_size < table -> hash_size)
-    {
-        Items_array tmp = (Items_array)realloc(table -> items, (table -> hash_size) * (sizeof(Items_ptr)));
-        if (!tmp)
-        {
-            free_table(table);
-            return no_memory;
-        }
-        table -> items = tmp;
-        for (int i = prev_size; i < table -> hash_size; ++i) (table -> items)[i] = NULL;
-    }
+    table -> hash_size = get_new_size(prev_size);
 
+    Items_array tmp = (Items_array)realloc(table -> items, (table -> hash_size) * (sizeof(Items_ptr)));
+    if (!tmp)
+    {
+        free_table(table);
+        return no_memory;
+    }
+    table -> items = tmp;
+    for (int i = prev_size; i < table -> hash_size; ++i) (table -> items)[i] = NULL;
     Items_ptr current_items;
     Item_ptr cur_item;
     int index, res;
@@ -73,7 +75,7 @@ int rebuilding_table(Hash_table_ptr table)
         {
             current_items = (table -> items)[i];
             cur_item = current_items -> head;
-            while (cur_item -> next)
+            if (cur_item)
             {
                 index = get_index(cur_item -> hash, table -> hash_size);
                 if (index < 0)
@@ -84,20 +86,33 @@ int rebuilding_table(Hash_table_ptr table)
                 if (index != i)
                 {
                     remove_item_from_list(current_items, cur_item);
-                    insert_in_list((table -> items)[index], cur_item);
+                    (table -> items)[index] = insert_in_list((table -> items)[index], cur_item);
+                    if (!(table -> items)[index])
+                    {
+                        free_table(table);
+                        return no_memory;
+                    }
+                }
+            }
+            while (cur_item -> next)
+            {
+                cur_item = cur_item -> next;
+                if (cur_item)
+                {
+                    index = get_index(cur_item -> hash, table -> hash_size);
+                    if (index < 0)
+                    {
+                        free_table(table);
+                        return index;
+                    }
+                    if (index != i)
+                    {
+                        remove_item_from_list(current_items, cur_item);
+                        insert_in_list((table -> items)[index], cur_item);
+                    }
                 }
             }
         }
-    }
-    if (prev_size > table -> hash_size)
-    {
-        Items_array tmp = (Items_array)realloc(table -> items, (table -> hash_size) * (sizeof(Items_ptr)));
-        if (!tmp)
-        {
-            free_table(table);
-            return no_memory;
-        }
-        table -> items = tmp;
     }
     return success;
 }
@@ -107,7 +122,10 @@ void remove_item_from_list(Items_ptr items, Item_ptr item)
     // если Item - единственное значение в списке
     if (!(item -> prev) && !(item -> next))
     {
-        free_items(items);
+        items -> head = NULL;
+        items -> tail = NULL;
+        free(items);
+        items = NULL;
         return;
     }
     // Если Item - голова
@@ -123,7 +141,7 @@ void remove_item_from_list(Items_ptr items, Item_ptr item)
     {
         items -> tail = item -> prev;
         items -> tail -> next = NULL;
-        item -> next = NULL;
+        item -> prev = NULL;
         return;
     }
     // если в середине
@@ -170,11 +188,12 @@ int insert(Hash_table_ptr table, char * definition, char * substitution)
     insert_in_list((table -> items)[index], item);
     (table -> count)++;
     
-    int result;
-    while (check_table(table) != success)
+    int result = check_table(table);
+    while (result != success)
     {
         result = rebuilding_table(table);
         if (result != success) return result;
+        result = check_table(table);
     }
 
     return success;
@@ -347,17 +366,30 @@ Hash_table_ptr create_table(int hash_size)
     return hash_table;
 }
 
-void insert_in_list(Items_ptr items, Item_ptr item)
+Items_ptr insert_in_list(Items_ptr items, Item_ptr item)
 {
+    if (!items)
+    {
+        items = create_item_list();
+        if (!items)
+        {
+            free_item(item);
+            return NULL;
+        }
+    }
     if (!(items -> head))
     {
         items -> head = item;
         items -> tail = item;
-        return;
+        item -> prev = NULL;
+        item -> next = NULL;
+        return items;
     }
     items -> tail -> next = item;
     item -> prev = items -> tail;
     items -> tail = item;
+    item -> next = NULL;
+    return items;
 }
 
 // инициализирование списка двусвязных списков
@@ -370,11 +402,24 @@ Items_array create_items(int size)
 
 void free_items(Items_ptr items)
 {
+    printf("\nHERE\n");
     if (!items) return;
     Item_ptr item = items -> head;
-    Item_ptr prev;
-    while (item -> next)
+    if (!item)
     {
+        free(items);
+        items = NULL;
+        return;
+    }
+    printf("%s\n", item -> definition);
+    printf("HERE\n");
+    Item_ptr prev;
+    prev = item -> next;
+    free_item(item);
+    item = prev;
+    while (item)
+    {
+        printf("%s\n", item ->definition);
         prev = item -> next;
         free_item(item);
         item = prev;
@@ -396,6 +441,7 @@ void free_item(Item_ptr item)
 
 void free_table(Hash_table_ptr table)
 {
+    if (!table) return;
     for (int i = 0; i < table -> hash_size; ++i)
     {
         if ((table -> items)[i]) free_items((table -> items)[i]);
