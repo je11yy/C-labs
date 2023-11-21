@@ -23,10 +23,10 @@ int get_depth(Node_ptr node)
 void print_tree(Node_ptr root, int space)
 {
     if (!root) return;
-    if (root -> left) print_tree(root -> left, space + 1);
-    for (int i = 0; i < space; ++i) printf("     ");
+    if (root -> left) print_tree(root -> left, space + strlen(root -> word -> buffer));
+    for (int i = 0; i < space; ++i) printf(" ");
     printf("%s\n", root -> word -> buffer);
-    if (root -> right) print_tree(root -> right, space + 1);
+    if (root -> right) print_tree(root -> right, space + strlen(root -> word -> buffer));
 }
 
 void delete_tree(Node_ptr root)

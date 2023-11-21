@@ -16,7 +16,7 @@ enum RESULTS
 
 void print_error(int error);
 
-Node_ptr make_tree(FILE * file, char separators[], int size);
+Node_ptr make_tree(FILE * file, char separators[], int * size_ptr);
 int in_separators(char separators[], int size, char symbol);
 int switch_command(Node_ptr * root, int command);
 Node_ptr search_node_via_length(Node_ptr root, int length);
@@ -57,7 +57,14 @@ int main(int argc, char * argv[])
         separators[j] = argv[i][0];
     }
 
-    Node_ptr root = make_tree(file, separators, argc - 2);
+    argc -= 2;
+    Node_ptr root = make_tree(file, separators, &argc);
+    if (argc == incorrect_input)
+    {
+        print_error(argc);
+        fclose(file);
+        return argc;
+    }
     if (!root)
     {
         print_error(no_memory);
@@ -113,7 +120,8 @@ Node_ptr recreate_tree(Node_ptr root)
     fclose(file);
     file = fopen(file_name, "r");
     if (!file) return NULL;
-    root = make_tree(file, " ", 1);
+    int size_ptr = 1;
+    root = make_tree(file, " ", &size_ptr);
     if (!root)
     {
         fclose(file);
@@ -142,12 +150,10 @@ int get_max_depth(Node_ptr root)
 {
     if (!root) return 0;
     int left, right;
-    if (root -> left) left = get_max_depth(root -> left);
-    else left = -1;
-    if (root -> right) right = get_max_depth(root -> right);
-    else right = -1;
+    left = get_max_depth(root -> left);
+    right = get_max_depth(root -> right);
     int max = left > right ? left : right;
-    return max;
+    return max + 1;
 }
 
 int switch_command(Node_ptr * root, int command)
@@ -317,8 +323,9 @@ void menu()
     printf("0. Exit.\n");
 }
 
-Node_ptr make_tree(FILE * file, char separators[], int size)
+Node_ptr make_tree(FILE * file, char separators[], int * size_ptr)
 {
+    int size = *size_ptr;
     Node_ptr root = NULL;
     Node_ptr node = NULL;
     int count;
@@ -441,6 +448,7 @@ Node_ptr make_tree(FILE * file, char separators[], int size)
         length = 0;
         all_words_quantity++;
     }
+    if (!root) *size_ptr = incorrect_input;
     return root;
 }
 
