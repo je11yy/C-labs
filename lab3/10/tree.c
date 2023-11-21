@@ -16,6 +16,7 @@ enum RESULTS
 Node_ptr create_node(char data)
 {
     Node_ptr node = (Node_ptr)malloc(sizeof(Node));
+    if (!node) return NULL;
     node -> data = data;
     node -> children = NULL;
     node -> next = NULL;
@@ -30,6 +31,7 @@ Node_ptr create_expression_tree(char * expression)
     Node_ptr current = root;
     Node_ptr node;
     Node_array stack = (Node_array)malloc(length * sizeof(Node_ptr));
+    if (!stack) return NULL;
     int result;
     int stack_size = 0;
     for (int i = 0; i < length; ++i)

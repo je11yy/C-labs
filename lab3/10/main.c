@@ -87,6 +87,11 @@ int get_expression(FILE * file, char ** expression)
     char symbol = fgetc(file);
     int length = 1;
     *expression = (char*)malloc(length * sizeof(char));
+    if (!(*expression))
+    {
+        fclose(file);
+        return no_memory;
+    }
     int count = 0;
     char * tmp;
     while (symbol != '\n' && symbol != EOF)
