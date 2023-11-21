@@ -36,10 +36,8 @@ typedef struct Node
 
 Undo_ptr create_undo(int command, Liver_ptr previous, Liver_ptr new);
 
-void delete_full_stack(Undo_stack undos, int size);
 void delete_stack(Undo_stack undos, int size);
 void delete_undo(Undo_ptr undo);
-void delete_full_undo(Undo_ptr undo);
 
 Birthday_ptr create_birthday(int day, int month, int year);
 Liver_ptr create_liver(char * surname, char * name, char * father_name, int day, int month, int year, char gender, double income);
@@ -60,7 +58,7 @@ int is_equal_livers(Liver_ptr first, Liver_ptr liver);
 void print_liver(FILE * file, Liver_ptr liver);
 void print_livers(FILE * file, Node_ptr head);
 
-Liver_ptr edit_liver(Node_ptr head, int index, Liver_ptr new_liver);
+int edit_liver(Node_ptr head, int index, Liver_ptr new_liver);
 Node_ptr find_via_index(Node_ptr head, int index);
 int get_index(Node_ptr head, Node_ptr liv);
 int get_liver_index(Node_ptr head, Liver_ptr liver);

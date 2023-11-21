@@ -65,23 +65,36 @@ Undo_ptr create_undo(int command, Liver_ptr previous, Liver_ptr new)
     if (!undo) return NULL;
 
     undo -> command = command;
-    undo -> previous = previous;
-    undo -> new = new;
-    return undo;
-}
-
-void delete_full_stack(Undo_stack undos, int size)
-{
-    for (int i = 0; i < size; ++i)
+    if (previous)
     {
-        delete_full_undo(undos[i]);
+        undo -> previous = create_liver(previous -> surname->buffer, previous -> name->buffer, previous -> father_name->buffer, previous ->birthday->day, previous->birthday->month, previous->birthday->year, previous->gender, previous->income);
+        if (!(undo -> previous))
+        {
+            free(undo);
+            undo = NULL;
+            return NULL;
+        }
     }
-    free(undos);
-    undos = NULL;
+    else undo -> previous = NULL;
+    if (new)
+    {
+        undo -> new = create_liver(new -> surname->buffer, new -> name->buffer, new -> father_name->buffer, new ->birthday->day, new->birthday->month, new->birthday->year, new->gender, new->income);
+        if (!(undo -> new))
+        {
+            delete_liver(undo -> previous);
+            free(undo);
+            undo = NULL;
+            return NULL;
+        }
+    }
+    else undo -> new = NULL;
+
+    return undo;
 }
 
 void delete_stack(Undo_stack undos, int size)
 {
+    if (!undos) return;
     for (int i = 0; i < size; ++i)
     {
         delete_undo(undos[i]);
@@ -92,51 +105,22 @@ void delete_stack(Undo_stack undos, int size)
 
 void delete_undo(Undo_ptr undo)
 {
-    switch (undo -> command)
-    {
-        case 1:
-            delete_liver(undo -> previous);
-            break;
-        case 2:
-            delete_liver(undo -> previous);
-            undo -> new = NULL;
-            break;
-        case 3:
-            undo -> new = NULL;
-            break;
-    }
+    if (!undo) return;
+    if (undo -> previous) delete_liver(undo -> previous);
+    if (undo -> new) delete_liver(undo -> new);
     free(undo);
     undo = NULL;
 }
 
-void delete_full_undo(Undo_ptr undo)
-{
-    if (undo -> previous)
-    {
-        delete_liver(undo -> previous);
-    }
-    if (undo -> new)
-    {
-        delete_liver(undo -> new);
-    }
-    free(undo);
-    undo = NULL;
-}
-
-// возвращает указатель на старого жителя
-Liver_ptr edit_liver(Node_ptr head, int index, Liver_ptr new_liver)
+int edit_liver(Node_ptr head, int index, Liver_ptr new_liver)
 {
     Node_ptr node = head;
     int i = 0;
     while ((i++) != index) node = node -> next;
     remove_node(head, index);
     int result = insert(&head, new_liver);
-    if (result != success)
-    {
-        delete_node(node);
-        return NULL;
-    }
-    return node -> liver;
+    if (result != success) return result;
+    return success;
 }
 
 Node_ptr find_via_index(Node_ptr head, int index)
@@ -245,14 +229,14 @@ void remove_node(Node_ptr head, int index)
         current = current -> next;
         i++;
     }
-    current -> liver = NULL;
-    prev -> next = current -> next;
-    current -> next = NULL;
+    Node_ptr tmp = current -> next;
+    delete_node(current);
+    prev -> next = tmp;
 }
 
 void delete_list(Node_ptr head)
 {
-    if (head == NULL) return;
+    if (!head) return;
     Node_ptr tmp = head -> next;
     while (tmp)
     {
@@ -266,6 +250,7 @@ void delete_list(Node_ptr head)
 void delete_node(Node_ptr node)
 {
     delete_liver(node -> liver);
+    node -> next = NULL;
     free(node);
     node = NULL;
 }
@@ -343,6 +328,7 @@ Liver_ptr create_liver(char * surname, char * name, char * father_name, int day,
 
 void delete_liver(Liver_ptr liver)
 {
+    if (!liver) return;
     delete_string(liver -> surname);
     delete_string(liver -> name);
     delete_string(liver -> father_name);

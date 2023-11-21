@@ -40,6 +40,11 @@ int main()
 
     Node_ptr head = NULL;
     FILE * file = fopen("livers.txt", "r");
+    if (!file)
+    {
+        print_error(file_open_error);
+        return file_open_error;
+    }
     int result = get_livers_from_file(file, &head);
     fclose(file);
     if (result != success)
@@ -49,18 +54,26 @@ int main()
     }
     int command = -1;
     int flag = 0;
+    int count = 0;
     while (command != 0)
     {
         menu();
         command = get_command();
-        if (command != 6 && flag == 1)
+        if (command == 0) break;
+        if (command == 6 && size != 0)
+        {
+            flag = 1;
+            count++;
+        }
+        if ((command != 6 || count > modifications / 2) && flag == 1)
         {
             modifications = 0;
+            count = 0;
             delete_stack(stack, size);
+            stack = NULL;
             flag = 0;
+            size = 0;
         }
-        else if (command == 6) flag = 1;
-        if (command == 0) break;
         result = switch_commands(&modifications, command, &head, &stack, &size);
         if (result != success)
         {
@@ -68,9 +81,9 @@ int main()
             return result;
         }
     }
-
     delete_list(head);
-    delete_full_stack(stack, size);
+    delete_stack(stack, size);
+    printf("Program has finished correctly.\n");
 }
 
 int only_letters(char * string)
@@ -170,6 +183,7 @@ int switch_commands(int * modifications, int command, Node_ptr * head, Undo_stac
             break;
         case 6:
             result = undo(head, *stack, size);
+            if (*size == 0) *stack = NULL;
             if (result != success) return result;
             break;
     }
@@ -213,7 +227,6 @@ int append_liver_file(int modifications, Node_ptr head, Undo_stack * stack, int 
         result = scanf("%s", file_name);
         file = fopen(file_name, "r");
     }
-
     Liver_ptr new_liver;
     result = get_liver(&new_liver, file);
     if (result != success)
@@ -248,7 +261,7 @@ int append_liver(int modifications, Node_ptr head, Undo_stack * stack, int * siz
         result = get_liver(&new_liver, stdin);
     }
     result = insert(&head, new_liver);
-    if (!result)
+    if (result != success)
     {
         delete_stack(*stack, *size);
         return result;
@@ -278,6 +291,7 @@ int find_liver(int * modifications, Node_ptr * head, Undo_stack * stack, int * s
         index = get_liver_index(*head, liver);
         if (index != -1) node = find_via_index(*head, index);
     }
+    if (liver) delete_liver(liver);
     print_liver(stdout, node -> liver);
     printf("\nLiver was found! Choose option.\n");
     printf("1. Delete user.\n");
@@ -293,9 +307,10 @@ int find_liver(int * modifications, Node_ptr * head, Undo_stack * stack, int * s
     index = get_index(*head, node);
     switch (command)
     {
-        case 3: break;
+        case 3:
+            break;
         case 1: 
-            result = append_undo(*modifications, stack, size, 1, liver, NULL);
+            result = append_undo(*modifications, stack, size, 1, node -> liver, NULL);
             if (result != success) return result;
             remove_node(*head, index);
             printf("Liver has been deleted!\n");
@@ -318,20 +333,33 @@ int liver_edit(int modification, Node_ptr head, Undo_stack * stack, int * size, 
     printf("Input form: ");
     Liver_ptr new_liver;
     int result = get_liver(&new_liver, stdin);
-    while (result != success)
-    {
-        fflush(stdin);
-        printf("\nIncorrect input. Try again: ");
-        result = get_liver(&new_liver, stdin);
-    }
-    Liver_ptr prev = edit_liver(head, index, new_liver);
-    if (!prev)
+    if (result == no_memory)
     {
         delete_list(head);
         delete_stack(*stack, *size);
         return no_memory;
     }
-    result = append_undo(modification, stack, size, 2, prev, new_liver);
+    while (result != success)
+    {
+        fflush(stdin);
+        printf("\nIncorrect input. Try again: ");
+        result = get_liver(&new_liver, stdin);
+        if (result == no_memory)
+        {
+            delete_list(head);
+            delete_stack(*stack, *size);
+            return no_memory;
+        }
+    }
+    Node_ptr prev = find_via_index(head, index);
+    result = append_undo(modification, stack, size, 2, prev -> liver, new_liver);
+    result = edit_liver(head, index, new_liver);
+    if (result != success)
+    {
+        delete_list(head);
+        delete_stack(*stack, *size);
+        return no_memory;
+    }
     if (result != success) return result;
     return success;
 }
@@ -367,25 +395,12 @@ int get_liver(Liver_ptr * liv, FILE * file)
 int append_undo(int modifications, Undo_stack * stack, int * size, int operation, Liver_ptr prev, Liver_ptr new)
 {
     Undo_ptr undo = create_undo(operation, prev, new);
-    if (modifications != 0)
-    {
-        if ((*size) >= ((modifications + 1) / 2))
-        {
-            delete_undo((*stack)[0]);
-            for (int i = 0; i < (*size) - 1; ++i)
-            {
-                (*stack)[i] = (*stack)[i + 1];
-            }
-            (*stack)[*size - 1] = undo;
-            return success;
-        }
-    }
 
     (*size)++;
     Undo_stack tmp = (Undo_stack)realloc(*stack, (*size) * sizeof(Undo_ptr));
     if (!tmp)
     {
-        delete_full_stack(*stack, *size);
+        delete_stack(*stack, *size);
         return no_memory;
     }
     *stack = tmp;
@@ -408,7 +423,6 @@ int undo(Node_ptr * head, Undo_stack stack, int * size)
     int result;
     Node_ptr node;
     int index;
-
     switch (operation)
     {
         case 1: // удаление
@@ -421,9 +435,9 @@ int undo(Node_ptr * head, Undo_stack stack, int * size)
             break;
         case 2: // изменение
             index = get_liver_index(*head, new);
-            prev = edit_liver(*head, index, prev);
-
-            if (!prev)
+            result = edit_liver(*head, index, prev);
+            delete_liver(new);
+            if (result != success)
             {
                 delete_stack(stack, *size);
                 return result;
@@ -432,12 +446,18 @@ int undo(Node_ptr * head, Undo_stack stack, int * size)
         case 3: // добавление
             index = get_liver_index(*head, new);
             remove_node(*head, index);
+            delete_liver(new);
             break;
     }
-    delete_undo(undo);
+    undo -> previous = NULL;
+    undo -> new = NULL;
+    free(undo);
+    undo = NULL;
     (*size)--;
+    stack[*size] = NULL;
     if (*size == 0)
     {
+        printf("Command was canceled.\n");
         free(stack);
         stack = NULL;
         return success;
@@ -445,11 +465,12 @@ int undo(Node_ptr * head, Undo_stack stack, int * size)
     Undo_stack tmp = (Undo_stack)realloc(stack, (*size) * sizeof(Undo_ptr));
     if (!tmp)
     {
-        delete_stack(stack, *size);
+        delete_stack(stack, (*size) - 1);
         delete_list(*head);
         return no_memory;
     }
     stack = tmp;
+    printf("Command was canceled.\n");
     return success;
 }
 
