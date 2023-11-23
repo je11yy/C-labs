@@ -99,6 +99,8 @@ int calculate_file(FILE * file, char * input_name)
             line = NULL;
             fclose(file);
             fclose(errors_file);
+            free(postfix);
+            postfix = NULL;
             return res;
         }
         else
@@ -117,18 +119,23 @@ int calculate_file(FILE * file, char * input_name)
                 line = NULL;
                 fclose(file);
                 fclose(errors_file);
+                free(postfix);
+                postfix = NULL;
                 return res;
             }
-            length = strlen(line);
-            if (line[length - 1] == '\n') line[length - 1] = 0;
-            print_results(line, postfix, calculated_result);
-            free(line);
-            line = NULL;
-            len = 0;
-            free(postfix);
-            postfix = NULL;
-            count++;
+            else
+            {
+                length = strlen(line);
+                if (line[length - 1] == '\n') line[length - 1] = 0;
+                print_results(line, postfix, calculated_result);
+                count++;
+            }
         }
+        free(line);
+        line = NULL;
+        len = 0;
+        free(postfix);
+        postfix = NULL;
         index++;
     }
     fclose(errors_file);
@@ -179,6 +186,7 @@ int priority(char operation)
         case '-': return 1;
         case '/': return 2;
         case '*': return 2;
+        case '~': return 2;
         case '%': return 2;
         case '^': return 3;
         default: return fail;
@@ -199,17 +207,20 @@ int infix_to_postfix(int * error, char ** postfix_result, const char * infix)
 
     int res;
     int i = 0;
-    int flag = 0;
+    int flag = 1;
+    char symbol;
     while (infix[i] != '\n' && infix[i] != '\0')
     {
-        if (isdigit(infix[i]))
+        symbol = infix[i];
+        if (isdigit(symbol))
         {
-            postfix[index++] = infix[i];
+            postfix[index++] = symbol;
             flag = 0;
         }
-        else if (is_operator(infix[i]) == success)
+        else if (is_operator(symbol) == success)
         {   
-            if (flag)
+            if (symbol == '-' && flag) symbol = '~';
+            else if (flag)
             {
                 free_list(stack);
                 free(postfix);
@@ -220,14 +231,15 @@ int infix_to_postfix(int * error, char ** postfix_result, const char * infix)
             else flag = 1;
             postfix[index++] = ' ';
             node = get_last(stack);
-            while (stack && priority(node -> data) >= priority(infix[i]))
+            while (stack && priority(node -> data) >= priority(symbol))
             {
                 postfix[index++] = node -> data;
                 postfix[index++] = ' ';
                 pop_back(&stack);
                 node = get_last(stack);
             }
-            res = push_back_char(&stack, infix[i]);
+            res = push_back_char(&stack, symbol);
+            node = get_last(stack);
             if (res != success)
             {
                 free_list(stack);
@@ -236,11 +248,12 @@ int infix_to_postfix(int * error, char ** postfix_result, const char * infix)
                 return no_memory;
             }
         }
-        else if (is_bracket(infix[i]) == success)
+        else if (is_bracket(symbol) == success)
         {
-            if (infix[i] == '(')
+            if (symbol == '(')
             {
-                res = push_back_char(&stack, infix[i]);
+                res = push_back_char(&stack, symbol);
+                node = get_last(stack);
                 if (res != success)
                 {
                     free_list(stack);
@@ -249,14 +262,14 @@ int infix_to_postfix(int * error, char ** postfix_result, const char * infix)
                     return no_memory;
                 }
             }
-            else if (infix[i] == ')')
+            else if (symbol == ')')
             {
                 node = get_last(stack);
                 while (stack && node -> data != '(')
                 {
-                    pop_back(&stack);
-                    postfix[index++] = ' ';
                     postfix[index++] = node -> data;
+                    postfix[index++] = ' ';
+                    pop_back(&stack);
                     node = get_last(stack);
                 }
                 if (!stack)
@@ -270,12 +283,12 @@ int infix_to_postfix(int * error, char ** postfix_result, const char * infix)
                 pop_back(&stack);
             }
         }
-        else if (infix[i] != ' ' && infix[i] != '\n' && infix[i] != '\t')
+        else if (symbol != ' ' && symbol != '\n' && symbol != '\t')
         {
             free_list(stack);
             free(postfix);
             postfix = NULL;
-            *error = incorrect_input;
+            *error = invalid_arguments;
             return runtime_error;
         }
         i++;
@@ -300,6 +313,8 @@ int infix_to_postfix(int * error, char ** postfix_result, const char * infix)
     {
         *error = incorrect_input;
         free_list(stack);
+        free(postfix);
+        postfix = NULL;
         return runtime_error;
     }
     free_list(stack);
@@ -332,8 +347,18 @@ int calculate_postfix(int * error, int * expression_result, const char * postfix
         }
         else
         {
-            prev_last = get_prev_last(stack);
-            last = prev_last -> next;
+            last = get_last(stack);
+            if (symbol == '~')
+            {
+                prev_last = last;
+            }
+            else prev_last = get_prev_last(stack);
+            if (!last || !prev_last)
+            {
+                *error = incorrect_input;
+                free_list(stack);
+                return runtime_error;
+            }
             result = do_operation(&res, symbol, prev_last -> value, last -> value);
             if (result != success)
             {
@@ -341,8 +366,12 @@ int calculate_postfix(int * error, int * expression_result, const char * postfix
                 free_list(stack);
                 return runtime_error;
             }
-            pop_back(&stack);
-            pop_back(&stack);
+            if (symbol == '~') pop_back(&stack);
+            else
+            {
+                pop_back(&stack);
+                pop_back(&stack);
+            }
             result = push_back(&stack, res);
             if (result != success) return result;
         }
@@ -378,8 +407,11 @@ int do_operation(int * result, char operation, int left, int right)
             *result = (left % right);
             break;
         case '^': 
-            if (right < 0) return invalid_arguments;
+            if (right < 0 || (left == 0 && right == 0)) return invalid_arguments;
             *result = pow(left, right);
+            break;
+        case '~':
+            *result = -right;
             break;
     }
     return success;
@@ -402,8 +434,8 @@ int is_bracket(char symbol)
 
 int is_operator(char symbol)
 {
-    char operators[] = "+-/%^*";
-    for (int i = 0; operators[i]; ++i)
+    char operators[] = "+-/%^*~";
+    for (int i = 0; operators[i] != 0; ++i)
     {
         if (symbol == operators[i]) return success;
     }

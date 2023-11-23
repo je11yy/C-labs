@@ -52,34 +52,23 @@ int push_back_char(Node_ptr * head, char data)
 
 void pop_back(Node_ptr * head)
 {
-    Node_ptr cur = NULL;
-    Node_ptr prev = NULL;
     if (!(*head)) return;
-    cur = *head;
-    while (cur -> next)
-    {
-        prev = cur;
-        cur = cur -> next;
-    }
-    if (!prev)
-    {
-        free(*head);
-        *head = NULL;
-    }
-    else
-    {
-        free(cur -> next);
-        prev -> next = NULL;
-    }
+    Node_ptr prev = get_prev_last(*head);
+    Node_ptr last = get_last(*head);
+    free_node(last);
+    if (prev) prev -> next = NULL;
+    else *head = NULL;
 }
 
 Node_ptr get_prev_last(Node_ptr head)
 {
+    if (!head) return NULL;
     Node_ptr prev = NULL;
-    while (head -> next)
+    Node_ptr tmp = head;
+    while (tmp -> next)
     {
-        prev = head;
-        head = head -> next;
+        prev = tmp;
+        tmp = tmp -> next;
     }
     return prev;
 }
@@ -87,8 +76,9 @@ Node_ptr get_prev_last(Node_ptr head)
 Node_ptr get_last(Node_ptr head)
 {
     if (!head) return NULL;
-    while (head -> next) head = head -> next;
-    return head;
+    Node_ptr tmp = head;
+    while (tmp -> next) tmp = tmp -> next;
+    return tmp;
 }
 
 Node_ptr create_node_char(char data)

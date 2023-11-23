@@ -8,12 +8,6 @@ typedef struct Node
     struct Node * next;
 } Node, *Node_ptr;
 
-typedef struct Stack
-{
-    Node_ptr head;
-    Node_ptr tail;
-} Stack, *Stack_ptr;
-
 int push_back(Node_ptr * head, int value);
 int push_back_char(Node_ptr * head, char data);
 void pop_back(Node_ptr * head);
