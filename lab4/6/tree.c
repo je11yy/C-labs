@@ -25,20 +25,10 @@ void print_tree(Node_ptr root, int level)
 void print_infix(FILE * file, Node_ptr root)
 {
     if (!root) return;
-    int flag = 0;
     if (is_operator(root -> data) == success) fprintf(file, "(");
-    if (root -> data == '~')
-    {
-        flag = 1;
-        fprintf(file, "%c", root -> data);
-
-    }
     print_infix(file, root -> left);
-    if (!flag)
-    {
-        fprintf(file, "%c", root -> data);
-        if (root -> data == '-' || root -> data == '+' || root -> data == '<') fprintf(file, ">");
-    }
+    fprintf(file, "%c", root -> data);
+    if (root -> data == '-' || root -> data == '+' || root -> data == '<') fprintf(file, ">");
     print_infix(file, root -> right);
     if (is_operator(root -> data) == success) fprintf(file, ")");
 }

@@ -391,12 +391,12 @@ int make_tree(Node_ptr * tree_result, int * error, char * infix)
             first_var = get_last_tree(stack);
             if (symbol == '~')
             {
-                node = create_tree_node(symbol, first_var -> node, NULL);
+                node = create_tree_node(symbol, NULL, first_var -> node);
             }
             else
             {
                 second_var = get_prev_last_tree(stack);
-                node = create_tree_node(symbol, first_var -> node, second_var -> node);
+                node = create_tree_node(symbol, second_var -> node, first_var -> node);
             }
             if (!node)
             {
