@@ -112,10 +112,11 @@ List_ptr raise_in_power(List_ptr list, List_ptr prev, int power)
     while (power)
     {
         list = mult(list, copy);
-        if (power != 1) copy = copy_list(copy_2);
+        copy = copy_list(copy_2);
         power--;
     }
     free_list(copy_2);
+    free_list(copy);
     free_list(prev);
     return list;
 }
@@ -181,6 +182,7 @@ List_ptr eval(List_ptr list, int value)
         free_list(list);
         return NULL;
     }
+    free_list(list);
     return new_list;
 }
 
@@ -342,18 +344,15 @@ List_ptr division(int * error, List_ptr first, List_ptr second)
             }
         }
     }
+    free_list(second);
+    free_list(first);
+    free_list(remainder);
     *error = success;
     return list;
 }
 
 List_ptr mult(List_ptr first, List_ptr second)
 {
-    if (first -> size == 1 && first -> head -> odd == 0) // значение сумматора - 0
-    {
-        free_list(second);
-        return first;
-    }
-
     Node_ptr first_head = first -> head;
     Node_ptr second_head = second -> head;
     Node_ptr node;
@@ -453,17 +452,11 @@ List_ptr sub(List_ptr first, List_ptr second)
 
 List_ptr add(List_ptr first, List_ptr second)
 {
-    if (first -> size == 1 && first -> head -> odd == 0) // значение сумматора - 0
-    {
-        free_list(first);
-        return second;
-    }
+    List_ptr new_list = create_list();
     Node_ptr first_head = first -> head;
     Node_ptr second_head = second -> head;
     int power;
     Node_ptr node;
-
-    List_ptr new_list = create_list();
     int result;
 
     int sum = 0;
@@ -518,7 +511,6 @@ List_ptr add(List_ptr first, List_ptr second)
         }
         second_head = second_head -> next;
     }
-
     free_list(first);
     free_list(second);
     return new_list;

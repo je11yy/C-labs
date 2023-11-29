@@ -51,6 +51,7 @@ Node_ptr create_node(int odd, int power)
 
 void free_node(Node_ptr node)
 {
+    node -> next = NULL;
     free(node);
     node = NULL;
 }
@@ -135,6 +136,12 @@ int push(List_ptr * list, int odd, int power)
             }
             prev -> next = node;
             node -> next = tmp;
+            return success;
+        }
+        else if (power == tmp -> power)
+        {
+            tmp -> odd += odd;
+            free_node(node);
             return success;
         }
         prev = tmp;

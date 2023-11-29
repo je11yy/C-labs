@@ -287,10 +287,31 @@ int command_handler(FILE * input)
         }
         if (!second && command != cm_diff)
         {
-            second = first;
-            first = summator;
+            second = copy_list(first);
+            if (!second)
+            {
+                free_list(first);
+                free_list(summator);
+                fclose(input);
+                free(line);
+                line = NULL;
+                return no_memory;
+            }
+            free_list(first);
+            first = copy_list(summator);
+            if (!first)
+            {
+                free_list(second);
+                free_list(summator);
+                fclose(input);
+                free(line);
+                line = NULL;
+                return no_memory;
+            }
+            free_list(summator);
         }
         else free_list(summator);
+
         print_command(command); // распечатка названия команды
         printf("Polynom 1: ");
         print_polynomial(first);
@@ -441,7 +462,7 @@ List_ptr do_command(int * error, int command, List_ptr first, List_ptr second)
             if (!new_list) return NULL;
             break;
         case cm_mod:
-            new_list = mod(error,first, second);
+            new_list = mod(error, first, second);
             if (!new_list) return NULL;
             break;
         case cm_eval:
@@ -459,6 +480,7 @@ List_ptr do_command(int * error, int command, List_ptr first, List_ptr second)
                 *error = no_memory;
                 return NULL;
             }
+            free_list(second);
             break;
         case cm_cmps:
             new_list = cmps(first, second);
