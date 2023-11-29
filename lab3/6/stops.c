@@ -23,43 +23,20 @@ void print_transports(Transport_ptr transport)
     while (transport)
     {
         printf("Transport number: %s\n", transport -> id -> buffer);
-        print_transport(transport);
+        print_stops(transport -> stop);
         transport = transport -> next;
     } 
 }
 
-void print_transport(Transport_ptr transport)
-{
-    Route_ptr route = transport -> route;
-    int i = 1;
-    while (route)
-    {
-        printf("Route %d:\n", i);
-        i++;
-        print_route(route);
-        route = route -> next;
-    } 
-}
-
-void print_route(Route_ptr route)
+void print_stops(Stop_ptr stop)
 {
     int i = 1;
-    Stop_ptr stop = route -> stop;
     while (stop)
     {
         print_stop(stop, i);
         i++;
         stop = stop -> next;
-    } 
-}
-
-void print_routes(Route_ptr route)
-{
-    while (route)
-    {
-        print_route(route);
-        route = route -> next;
-    } 
+    }
 }
 
 void print_stop(Stop_ptr stop, int i)
@@ -76,22 +53,16 @@ Transport_ptr max_length(int * result, Transport_ptr transport)
     Transport_ptr tmp = transport;
     Transport_ptr answer = NULL;
     int max_count = 0, count = 0;
-    Route_ptr tmp_route;
     Stop_ptr tmp_stop;
 
     while (tmp)
     {
         count = 0;
-        tmp_route = tmp -> route;
-        while (tmp_route)
+        tmp_stop = tmp -> stop;
+        while (tmp_stop)
         {
-            tmp_stop = tmp_route -> stop;
-            while (tmp_stop)
-            {
-                tmp_stop = tmp_stop -> next;
-                count++;
-            }
-            tmp_route = tmp_route -> next;
+            count++;
+            tmp_stop = tmp_stop -> next;
         }
         if (count > max_count)
         {
@@ -109,22 +80,16 @@ Transport_ptr min_length(int * result, Transport_ptr transport)
     Transport_ptr tmp = transport;
     Transport_ptr answer = NULL;
     int min_count = -1, count = 0;
-    Route_ptr tmp_route;
     Stop_ptr tmp_stop;
 
     while (tmp)
     {
         count = 0;
-        tmp_route = tmp -> route;
-        while (tmp_route)
+        tmp_stop = tmp -> stop;
+        while (tmp_stop)
         {
-            tmp_stop = tmp_route -> stop;
-            while (tmp_stop)
-            {
-                tmp_stop = tmp_stop -> next;
-                count++;
-            }
-            tmp_route = tmp_route -> next;
+            count++;
+            tmp_stop = tmp_stop -> next;
         }
         if (count < min_count || min_count == -1)
         {
@@ -145,20 +110,14 @@ Transport_ptr max_downtime(Transport_ptr transport)
     double max_downtime = 0;
     Transport_ptr tmp = transport;
     Transport_ptr answer;
-    Route_ptr route;
     Stop_ptr stop;
     while (tmp)
     {
-        route = tmp -> route;
-        while (route)
+        stop = tmp -> stop;
+        while (stop)
         {
-            stop = route -> stop;
-            while (stop)
-            {
-                downtime += get_downtime(stop);
-                stop = stop -> next;
-            }
-            route = route -> next;
+            downtime += get_downtime(stop);
+            stop = stop -> next;
         }
         if (downtime - max_downtime < eps)
         {
@@ -179,26 +138,20 @@ Transport_ptr max_downtime_on_stop(Transport_ptr transport)
     double max_downtime = 0;
     Transport_ptr tmp = transport;
     Transport_ptr answer;
-    Route_ptr route;
     Stop_ptr stop;
     while (tmp)
     {
-        route = tmp -> route;
-        while (route)
+        stop = tmp -> stop;
+        while (stop)
         {
-            stop = route -> stop;
-            while (stop)
+            downtime = get_downtime(stop);
+            if (max_downtime - downtime > eps)
             {
-                downtime = get_downtime(stop);
-                if (max_downtime - downtime > eps)
-                {
-                    max_downtime = downtime;
-                    answer = tmp;
-                }
-                downtime = 0;
-                stop = stop -> next;
+                max_downtime = downtime;
+                answer = tmp;
             }
-            route = route -> next;
+            downtime = 0;
+            stop = stop -> next;
         }
         tmp = tmp -> next;
     }
@@ -213,26 +166,20 @@ Transport_ptr min_downtime_on_stop(Transport_ptr transport)
     double min_downtime = -1;
     Transport_ptr tmp = transport;
     Transport_ptr answer;
-    Route_ptr route;
     Stop_ptr stop;
     while (tmp)
     {
-        route = tmp -> route;
-        while (route)
+        stop = tmp -> stop;
+        while (stop)
         {
-            stop = route -> stop;
-            while (stop)
+            downtime = get_downtime(stop);
+            if (downtime - min_downtime > eps || min_downtime < eps)
             {
-                downtime = get_downtime(stop);
-                if (downtime - min_downtime > eps || min_downtime < eps)
-                {
-                    min_downtime = downtime;
-                    answer = tmp;
-                }
-                downtime = 0;
-                stop = stop -> next;
+                min_downtime = downtime;
+                answer = tmp;
             }
-            route = route -> next;
+            downtime = 0;
+            stop = stop -> next;
         }
         tmp = tmp -> next;
     }
@@ -255,19 +202,22 @@ double get_downtime(Stop_ptr stop)
 Transport_ptr max_routes(int * result, Transport_ptr transport)
 {
     if (!transport) return NULL;
-    int count = 1;
+    int count = 0;
     int max_count = 0;
     Transport_ptr tmp = transport;
     Transport_ptr answer;
-    Route_ptr route;
+    Stop_ptr stop;
     while (tmp)
     {
-        count = 1;
-        route = tmp -> route;
-        while (route -> next)
+        count = 0;
+        stop = tmp -> stop;
+        while (stop)
         {
-            count++;
-            route = route -> next;
+            if (stop -> marker == 'F')
+            {
+                count++;
+            }
+            stop = stop -> next;
         }
         if (count > max_count)
         {
@@ -287,15 +237,18 @@ Transport_ptr min_routes(int * result, Transport_ptr transport)
     int min_count = -1;
     Transport_ptr tmp = transport;
     Transport_ptr answer;
-    Route_ptr route;
+    Stop_ptr stop;
     while (tmp)
     {   
-        count = 1;
-        route = tmp -> route;
-        while (route -> next)
+        count = 0;
+        stop = tmp -> stop;
+        while (stop)
         {
-            count++;
-            route = route -> next;
+            if (stop -> marker == 'F')
+            {
+                count++;
+            }
+            stop = stop -> next;
         }
         if (count < min_count || min_count == -1)
         {
@@ -313,26 +266,24 @@ Transport_ptr min_length_route(int * result, Transport_ptr transport)
     int min_length = -1, length = 0;
     Transport_ptr answer;
     Transport_ptr tmp = transport;
-    Route_ptr route;
     Stop_ptr stop;
     while (tmp)
     {
-        route = tmp -> route;
-        while (route)
+        stop = tmp -> stop;
+        length = 0;
+        while (stop -> next)
         {
-            stop = route -> stop;
-            length = 0;
-            while (stop)
+            length++;
+            if (stop -> marker == 'F')
             {
-                length++;
-                stop = stop -> next;
+                if (length < min_length || min_length == -1)
+                {
+                    min_length = length;
+                    answer = tmp;
+                }
+                length = 0;
             }
-            route = route -> next;
-            if (length < min_length || min_length == -1)
-            {
-                min_length = length;
-                answer = tmp;
-            }
+            stop = stop -> next;
         }
         tmp = tmp -> next;
     }
@@ -345,26 +296,24 @@ Transport_ptr max_length_route(int * result, Transport_ptr transport)
     int max_length = 0, length = 0;
     Transport_ptr answer;
     Transport_ptr tmp = transport;
-    Route_ptr route;
     Stop_ptr stop;
     while (tmp)
     {
-        route = tmp -> route;
-        while (route)
+        stop = tmp -> stop;
+        length = 0;
+        while (stop -> next)
         {
-            stop = route -> stop;
-            length = 0;
-            while (stop)
+            length++;
+            if (stop -> marker == 'F')
             {
-                length++;
-                stop = stop -> next;
+                if (length > max_length)
+                {
+                    max_length = length;
+                    answer = tmp;
+                }
+                length = 0;
             }
-            route = route -> next;
-            if (length > max_length)
-            {
-                max_length = length;
-                answer = tmp;
-            }
+            stop = stop -> next;
         }
         tmp = tmp -> next;
     }
@@ -372,7 +321,7 @@ Transport_ptr max_length_route(int * result, Transport_ptr transport)
     return answer;
 }
 
-Transport_ptr create_transport(char * id, Route_ptr route) 
+Transport_ptr create_transport(char * id) 
 {
     Transport_ptr transport = (Transport_ptr)malloc(sizeof(Transport));
     if (!transport) return NULL;
@@ -385,7 +334,7 @@ Transport_ptr create_transport(char * id, Route_ptr route)
         return NULL;
     }
     transport -> next = NULL;
-    transport -> route = route;
+    transport -> stop = NULL;
     return transport;
 }
 
@@ -441,117 +390,57 @@ double coordinates[2], char marker)
 {
     Stop_ptr stop = create_stop(stop_time, departure_time, coordinates, marker);
     if (!stop) return NULL;
-
-    Route_ptr route;
-    Transport_ptr transport;
-    if (!(transports))
+    Transport_ptr tmp = transports;
+    Transport_ptr new_transport;
+    if (!transports) // если нет ни одного транспорта
     {
-        route = create_route(stop);
-        transports = create_transport(transport_id, route);
-        if (!(transports))
+        new_transport = create_transport(transport_id);
+        if (!new_transport)
         {
             delete_stop(stop);
             return NULL;
         }
-        return transports;
+        transports = new_transport;
+        tmp = transports;
     }
-    transport = transports;
-    while (transport)
+    else
     {
-        if (strcmp(transport -> id -> buffer, transport_id) == success) break;
-        transport = transport -> next;
-    }
-    if (!transport)
-    {
-        route = create_route(stop);
-        transports = add_transports(transports, transport_id, route);
-        return transports;
-    }
-    int result;
-    switch (marker)
-    {
-        case 'S':
-            transport -> route = push(transport -> route, stop);
-            if (!(transport -> route))
+        while (tmp -> next && strcmp(tmp -> id -> buffer, transport_id) != success) tmp = tmp -> next;
+        if (strcmp(tmp -> id -> buffer, transport_id) != success)
+        {
+            transports = add_transports(transports, transport_id);
+            if (!transports)
             {
-                delete_transports(transports);
+                delete_stop(stop);
                 return NULL;
             }
-            return transports;
-        case 'F':
-            transport -> route = push_back(transport -> route, stop);
-            if (!(transport -> route))
-            {
-                delete_transports(transports);
-                return NULL;
-            }
-            return transports;
+            tmp = transports;
+        }
+        while (tmp -> next && strcmp(tmp -> id -> buffer, transport_id) != success) tmp = tmp -> next;
     }
-    transport -> route = push_middle(transport -> route, stop);
-    if (!(transport -> route))
+    Stop_ptr current_stop = tmp -> stop;
+    if (!current_stop) // если еще нет остановок
     {
-        delete_transports(transports);
-        return NULL;
+        tmp -> stop = stop;
+        return transports;
     }
-    return transports;
-}
-
-Route_ptr push_middle(Route_ptr route, Stop_ptr stop)
-{
-    Route_ptr tmp = route;
-    Route_ptr prev_route = route;
+    // если остановки есть, нужно найти место
     Stop_ptr prev = NULL;
-    Stop_ptr cur_stop;
-    while (tmp)
+    while (current_stop)
     {
-        cur_stop = tmp -> stop;
-        prev = cur_stop;
-        while (cur_stop -> next && compare_stops(cur_stop, stop) < 0)
+        if (compare_stops(current_stop, stop) > 0)
         {
-            prev = cur_stop;
-            cur_stop = cur_stop -> next;
+            stop -> next = current_stop;
+            if (!prev) tmp -> stop = stop;
+            else prev -> next = stop;
+            return transports;
         }
-        if (prev == cur_stop) // единственная остановка
-        {
-            if (compare_stops(cur_stop, stop) < 0 && cur_stop -> marker != 'F')
-            {
-                cur_stop -> next = stop;
-                return route;
-            }
-            else if (compare_stops(cur_stop, stop) > 0 && cur_stop -> marker != 'S')
-            {
-                stop -> next = cur_stop;
-                tmp -> stop = stop;
-                return route;
-            }
-        }
-        else if (!(cur_stop -> next)) // закончился список
-        {
-            if (compare_stops(cur_stop, stop) < 0 && cur_stop -> marker != 'F')
-            {
-                cur_stop -> next = stop;
-                return route;
-            }
-        }
-        else if (compare_stops(cur_stop, stop) > 0 && compare_stops(prev, stop) < 0)
-        {
-            stop -> next = cur_stop;
-            prev -> next = stop;
-            return route;
-        }
-        prev_route = tmp;
-        tmp = tmp -> next;
+        prev = current_stop;
+        current_stop = current_stop -> next;
     }
-
-    Route_ptr new_route = create_route(stop);
-    if (!new_route)
-    {
-        delete_routes(route);
-        delete_stop(stop);
-        return NULL;
-    }
-    prev_route -> next = new_route;
-    return route;
+    // закончились остановки
+    prev -> next = stop;
+    return transports;
 }
 
 int compare_stops(Stop_ptr first, Stop_ptr second)
@@ -570,13 +459,13 @@ int compare_stops(Stop_ptr first, Stop_ptr second)
     else return 1; // первое больше
 }
 
-Transport_ptr add_transports(Transport_ptr transports, char * transport_id, Route_ptr route) // вставка в конец
+Transport_ptr add_transports(Transport_ptr transports, char * transport_id) // вставка в конец
 {
-    Transport_ptr transport = create_transport(transport_id, route);
+    Transport_ptr transport = create_transport(transport_id);
     if (!transport)
     {
         delete_transports(transports);
-        delete_route(route);
+        delete_stops(transport -> stop);
         return NULL;
     }
     Transport_ptr tmp = transports;
@@ -600,28 +489,9 @@ void delete_transports(Transport_ptr transports)
 void delete_transport(Transport_ptr transport)
 {
     delete_string(transport -> id);
-    delete_routes(transport -> route);
+    delete_stops(transport -> stop);
     free(transport);
     transport = NULL;
-}
-
-void delete_routes(Route_ptr routes)
-{
-    Route_ptr tmp;
-    while (routes -> next)
-    {
-        tmp = routes -> next;
-        delete_route(routes);
-        routes = tmp;
-    }
-    delete_route(routes);
-}
-
-void delete_route(Route_ptr route)
-{
-    delete_stops(route -> stop);
-    free(route);
-    route = NULL;
 }
 
 Transport_ptr search_transport(Transport_ptr transports, char * transport_id)
@@ -633,73 +503,4 @@ Transport_ptr search_transport(Transport_ptr transports, char * transport_id)
         tmp = tmp -> next;
     }
     return NULL;
-}
-
-Route_ptr push(Route_ptr route, Stop_ptr stop) // вставка в начало
-{
-    // НЕЛЬЗЯ ЧТОБЫ МАРШРУТЫ ПЕРЕСЕКАЛИСЬ ПО ВРЕМЕНИ
-    // значит правила такие:
-    // первый элемент маршрута по времени должен быть БОЛЬШЕ времени заданной остановки
-    Route_ptr tmp = route;
-    Route_ptr prev = route;
-    while (tmp)
-    {
-        if (compare_stops(tmp -> stop, stop) > 0 && tmp -> stop -> marker != 'S')
-        {
-            stop -> next = tmp -> stop;
-            tmp -> stop = stop;
-            return route;
-        }
-        prev = tmp;
-        tmp = tmp -> next;
-    }
-    Route_ptr new_route = create_route(stop);
-    if (!new_route)
-    {
-        delete_stop(stop);
-        return NULL;
-    }
-    prev -> next = new_route;
-    return route;
-}
-
-Route_ptr create_route(Stop_ptr stop)
-{
-    Route_ptr route = (Route_ptr)malloc(sizeof(Route));
-    if (!route) return NULL;
-    route -> stop = stop;
-    route -> next = NULL;
-    return route;
-}
-
-Route_ptr push_back(Route_ptr route, Stop_ptr stop) // вставка в конец
-{
-    Route_ptr tmp = route;
-    Route_ptr prev_route = route;
-    Stop_ptr cur_stop;
-    while (tmp)
-    {
-        cur_stop = tmp -> stop;
-        while (cur_stop -> next)
-        {
-            cur_stop = cur_stop -> next;
-        }
-        if (cur_stop -> marker != 'F' && compare_stops(cur_stop, stop) < 0)
-        {
-            cur_stop -> next = stop;
-            return route;
-        }
-        prev_route = tmp;
-        tmp = tmp -> next;
-    }
-
-    Route_ptr new_route = create_route(stop);
-    if (!new_route)
-    {
-        delete_routes(route);
-        delete_stop(stop);
-        return NULL;
-    }
-    prev_route -> next = new_route;
-    return route;
 }

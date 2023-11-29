@@ -47,6 +47,8 @@ int main(int argc, char * argv[])
         print_error(result);
         return result;
     }
+    printf("All transports:\n\n");
+    print_transports(transport);
     int command = -1;
     while (command != 0)
     {
@@ -84,48 +86,49 @@ void switch_command(int command, Transport_ptr transports)
         case 1:
             transport = min_routes(&result, transports);
             printf("Transport id: %s. Number of routes: %d\n\n", transport -> id -> buffer, result);
-            print_transport(transport);
+            print_stops(transport -> stop);
             break;
         case 2:
             transport = max_routes(&result, transports);
             printf("Transport id: %s. Number of routes: %d\n\n", transport -> id -> buffer, result);
-            print_transport(transport);
+            print_stops(transport -> stop);
             break;
         case 3:
             transport = min_length(&result, transports);
             printf("Transport id: %s. Number of passed stops: %d\n\n", transport -> id -> buffer, result);
-            print_transport(transport);
+            print_stops(transport -> stop);
             break;
         case 4:
             transport = max_length(&result, transports);
             printf("Transport id: %s. Number of passed stops: %d\n\n", transport -> id -> buffer, result);
-            print_transport(transport);
+            print_stops(transport -> stop);
             break;
         case 5:
             transport = min_length_route(&result, transports);
             printf("Transport id: %s. Number of passed stops on the min length route: %d\n\n", transport -> id -> buffer, result);
-            print_transport(transport);
+            print_stops(transport -> stop);
             break;
         case 6:
             transport = max_length_route(&result, transports);
             printf("Transport id: %s. Number of passed stops on the max length route: %d\n\n", transport -> id -> buffer, result);
-            print_transport(transport);
+            print_stops(transport -> stop);
             break;
         case 7:
             transport = min_downtime_on_stop(transports);
             printf("Transport id: %s.\n\n", transport -> id -> buffer);
-            print_transport(transport);
+            print_stops(transport -> stop);
             break;
         case 8:
             transport = max_downtime_on_stop(transports);
             printf("Transport id: %s.\n\n", transport -> id -> buffer);
-            print_transport(transport);
+            print_stops(transport -> stop);
             break;
         case 9:
             transport = max_downtime(transports);
             printf("Transport id: %s.\n\n", transport -> id -> buffer);
-            print_transport(transport);
+            print_stops(transport -> stop);
             break;
+        default: break;
     }
 }
 
