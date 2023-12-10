@@ -47,8 +47,8 @@ int oversprintf(char * buffer, const char *format, ...);
 int main()
 {
     int count = 0;
-    int result = overfprintf(stdout, "\t ans");
-    printf("%d\n", count);
+    int result = overfprintf(stdout, "\t ans%n", &count);
+    printf("\ncount: %d\n", count);
     if (result == incorrect_input)
     {
         print_error(result);
@@ -202,7 +202,7 @@ int oversprintf(char * buffer, const char *format, ...)
                 {
                     ptr = va_arg(arguments, int*);
                     *ptr = i;
-                    i++;
+                    i += 2;
                 }
                 else
                 {
@@ -328,7 +328,7 @@ int overfprintf(FILE *stream, const char *format, ...)
                 {
                     ptr = va_arg(arguments, int*);
                     *ptr = i;
-                    i++;
+                    i += 2;
                 }
                 else
                 {
@@ -812,9 +812,9 @@ int print_bytes(unsigned char ** answer, const void * number, size_t size)
 {
     unsigned char *byte_ptr = (unsigned char*) number;
     unsigned char byte, bit;
-    unsigned char * buffer = (unsigned char*) malloc(size * sizeof(unsigned char));
+    unsigned char * buffer = (unsigned char*) malloc((8 * size + 1) * sizeof(unsigned char));
     if (buffer == NULL) return no_memory;
-    buffer[size - 1] = '\0';
+    buffer[size] = '\0';
     int k = 0;
     for (size_t i = 0; i < size; ++i)
     {
