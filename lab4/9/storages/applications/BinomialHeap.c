@@ -178,7 +178,7 @@ status Binomial_Heap_meld(Binomial_Heap_ptr * res, Binomial_Heap_ptr * first, Bi
     }
 
 
-    Binomial_Heap_node_ptr left = NULL;
+    Binomial_Heap_node_ptr prev = NULL;
     Binomial_Heap_node_ptr current = tmp->head;
     Binomial_Heap_node_ptr right = tmp->head->brother;
 
@@ -200,14 +200,14 @@ status Binomial_Heap_meld(Binomial_Heap_ptr * res, Binomial_Heap_ptr * first, Bi
                 if (current == tmp->head) tmp->head = right;
                 current = right;
             }
-            if (left) left->brother = current;
+            if (prev) prev->brother = current;
             current->degree++;
             current->brother = tmp_node;
             right = tmp_node;
         }
         else
         {
-            left = current;
+            prev = current;
             current = right;
             right = right->brother;
         }
@@ -252,16 +252,16 @@ status Binomial_Heap_delete_max(Binomial_Heap_ptr * storage, Application_ptr * r
     *res_application = (*storage)->max->application;
     Binomial_Heap_node_ptr max = (*storage)->max;
     Binomial_Heap_node_ptr current = (*storage)->head;
-    Binomial_Heap_node_ptr left = NULL;
+    Binomial_Heap_node_ptr prev = NULL;
     while (current && current != max)
     {
-        left = current;
+        prev = current;
         current = current->brother;
     }
 
     // убираем из списка корней
-    if (!left) (*storage)->head = current->brother;
-    else left->brother = max->brother;
+    if (!prev) (*storage)->head = current->brother;
+    else prev->brother = max->brother;
 
     Binomial_Heap_ptr heap = Binomial_Heap_create();
     if (!heap)
@@ -271,17 +271,17 @@ status Binomial_Heap_delete_max(Binomial_Heap_ptr * storage, Application_ptr * r
     }
 
     Binomial_Heap_node_ptr node = max->son;
-    Binomial_Heap_node_ptr right = node->brother;
+    Binomial_Heap_node_ptr next = node->brother;
     Binomial_Heap_node_ptr bro;
 
     // reverse children
-    while (right)
+    while (next)
     {
-        bro = right->brother;
-        right->brother = node;
+        bro = next->brother;
+        next->brother = node;
         node->brother = NULL;
-        node = right;
-        right = bro;
+        node = next;
+        next = bro;
     }
     heap->head = node;
     Binomial_Heap_ptr new = NULL;

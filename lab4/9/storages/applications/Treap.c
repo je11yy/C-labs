@@ -224,17 +224,17 @@ status Treap_delete_max(Treap_ptr * storage, Application_ptr * res_application)
         return success;
     }
 
-    Treap_node_ptr left = root;
+    Treap_node_ptr prev = root;
     root = root->right;
 
     while (root->right)
     {
-        left = root;
+        prev = root;
         root = root->right;
     }
 
     *res_application = root->application;
-    left->right = root->left;
+    prev->right = root->left;
 
     free(root);
     (*storage)->size--;

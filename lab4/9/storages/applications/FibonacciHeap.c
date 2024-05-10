@@ -200,7 +200,7 @@ status Fibonacci_Heap_consolidate(Fibonacci_Heap_ptr * storage)
     if (!(*storage)->max || (*storage)->max->right == (*storage)->max) return success;
 
     FH_node_ptr current = (*storage)->max;
-    FH_node_ptr right = current->right;
+    FH_node_ptr next = current->right;
     size_t size = log2(1.0 * (*storage)->size) + 3;
 
     FH_node_ptr * array = (FH_node_ptr*)calloc(size, sizeof(FH_node_ptr));
@@ -216,7 +216,7 @@ status Fibonacci_Heap_consolidate(Fibonacci_Heap_ptr * storage)
 
     while (current)
     {
-        right = current->right;
+        next = current->right;
         if (current->right == current) current->right = NULL;
 
         while (array[current->rank])
@@ -232,12 +232,12 @@ status Fibonacci_Heap_consolidate(Fibonacci_Heap_ptr * storage)
         }
 
         array[current->rank] = current;
-        current = right;
+        current = next;
     }
 
     FH_node_ptr top = NULL;
     FH_node_ptr start = NULL;
-    FH_node_ptr left = NULL;
+    FH_node_ptr prev = NULL;
 
     for (size_t i = 0; i < size; ++i)
     {
@@ -246,14 +246,14 @@ status Fibonacci_Heap_consolidate(Fibonacci_Heap_ptr * storage)
         top = top ? top : array[i];
 
         if (applications_comparator(array[i]->application, top->application) > 0) top = array[i];
-        if (left) left->right = array[i];
+        if (prev) prev->right = array[i];
 
-        array[i]->left = left;
-        left = array[i];
+        array[i]->left = prev;
+        prev = array[i];
     }
 
-    left->right = start;
-    start->left = left;
+    prev->right = start;
+    start->left = prev;
     (*storage)->max = top;
     free(array);
 
