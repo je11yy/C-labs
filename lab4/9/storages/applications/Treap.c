@@ -18,8 +18,8 @@ Treap_node_ptr Treap_node_create(Application_ptr application)
         return NULL;
     }
     node->application = application;
-    node->prev = NULL;
-    node->next = NULL;
+    node->left = NULL;
+    node->right = NULL;
 
     srand(time(NULL));
     node->priority = rand();
@@ -29,8 +29,8 @@ Treap_node_ptr Treap_node_create(Application_ptr application)
 void Treap_node_free(Treap_node_ptr node)
 {
     if (!node) return;
-    Treap_node_free(node->next);
-    Treap_node_free(node->prev);
+    Treap_node_free(node->right);
+    Treap_node_free(node->left);
 
     if (node->application) free_application(node->application);
     free(node);
@@ -83,7 +83,7 @@ status Treap_node_copy(Treap_node_ptr * to, Treap_node_ptr from)
     }
 
     status error;
-    if ((error = Treap_node_copy(&new->next, from->next)) != success || (error = Treap_node_copy(&new->prev, from->prev)) != success)
+    if ((error = Treap_node_copy(&new->right, from->right)) != success || (error = Treap_node_copy(&new->left, from->left)) != success)
     {
         Treap_node_free(from);
         Treap_node_free(*to);
@@ -132,12 +132,12 @@ status Treap_split(Treap_node_ptr node, Application_ptr application, Treap_node_
     status error;
     if (applications_comparator(node->application, application) > 0)
     {
-        if ((error = Treap_split(node->next, application, &(node->next), second)) != success) return error;
+        if ((error = Treap_split(node->right, application, &(node->right), second)) != success) return error;
         *first = node;
     }
     else
     {
-        if ((error = Treap_split(node->prev, application, first, &(node->prev))) != success) return error;
+        if ((error = Treap_split(node->left, application, first, &(node->left))) != success) return error;
         *second = node;
     }
     return success;
@@ -151,10 +151,10 @@ Treap_node_ptr Treap_node_merge(Treap_node_ptr first, Treap_node_ptr second)
 
     if (first->priority > second->priority)
     {
-        first->next = Treap_node_merge(first->next, second);
+        first->right = Treap_node_merge(first->right, second);
         return first;
     }
-    second->next = Treap_node_merge(first, second->prev);
+    second->right = Treap_node_merge(first, second->left);
     return second;
 }
 
@@ -201,7 +201,7 @@ status Treap_get_max(Treap_ptr * storage, Application_ptr * res_application)
 
     
     Treap_node_ptr current = (*storage)->root;
-    while (current->next) current = current->next;
+    while (current->right) current = current->right;
 
     *res_application = current->application;
 
@@ -216,25 +216,25 @@ status Treap_delete_max(Treap_ptr * storage, Application_ptr * res_application)
 
     Treap_node_ptr root = (*storage)->root;
 
-    if (!(root->next))
+    if (!(root->right))
     {
         *res_application = root->application;
-        (*storage)->root = root->prev;
+        (*storage)->root = root->left;
         free(root);
         return success;
     }
 
-    Treap_node_ptr prev = root;
-    root = root->next;
+    Treap_node_ptr left = root;
+    root = root->right;
 
-    while (root->next)
+    while (root->right)
     {
-        prev = root;
-        root = root->next;
+        left = root;
+        root = root->right;
     }
 
     *res_application = root->application;
-    prev->next = root->prev;
+    left->right = root->left;
 
     free(root);
     (*storage)->size--;

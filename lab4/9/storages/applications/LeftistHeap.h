@@ -7,8 +7,8 @@ typedef struct Leftist_node
 {
     Application_ptr application;
     int distance;
-    struct Leftist_node * prev;
-    struct Leftist_node * next;
+    struct Leftist_node * left;
+    struct Leftist_node * right;
 
 } Leftist_node, *Leftist_node_ptr;
 

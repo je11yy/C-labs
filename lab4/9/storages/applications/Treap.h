@@ -7,8 +7,8 @@ typedef struct Treap_node
 {
     Application_ptr application;
     int priority;
-    struct Treap_node * prev;
-    struct Treap_node * next;
+    struct Treap_node * left;
+    struct Treap_node * right;
 } Treap_node, *Treap_node_ptr;
 
 typedef struct Treap

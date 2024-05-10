@@ -6,8 +6,8 @@
 typedef struct Skew_node
 {
     Application_ptr application;
-    struct Skew_node * prev;
-    struct Skew_node * next;
+    struct Skew_node * left;
+    struct Skew_node * right;
 
 } Skew_node, *Skew_node_ptr;
 

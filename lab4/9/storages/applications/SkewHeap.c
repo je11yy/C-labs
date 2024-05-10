@@ -42,16 +42,16 @@ Skew_node_ptr Skew_Heap_node_create(Application_ptr application)
         return NULL;
     }
     node->application = application;
-    node->prev = NULL;
-    node->next = NULL;
+    node->left = NULL;
+    node->right = NULL;
     return node;
 }
 
 void Skew_Heap_node_free(Skew_node_ptr node)
 {
     if (!node) return;
-    Skew_Heap_node_free(node->next);
-    Skew_Heap_node_free(node->prev);
+    Skew_Heap_node_free(node->right);
+    Skew_Heap_node_free(node->left);
 
     if (node->application) free_application(node->application);
     free(node);
@@ -80,7 +80,7 @@ status Skew_Heap_node_copy(Skew_node_ptr * to, Skew_node_ptr from)
     }
 
     status error;
-    if ((error = Skew_Heap_node_copy(&new->next, from->next)) != success || (error = Skew_Heap_node_copy(&new->prev, from->prev)) != success)
+    if ((error = Skew_Heap_node_copy(&new->right, from->right)) != success || (error = Skew_Heap_node_copy(&new->left, from->left)) != success)
     {
         Skew_Heap_node_free(from);
         Skew_Heap_node_free(*to);
@@ -160,7 +160,7 @@ status Skew_Heap_delete_max(Skew_Heap_ptr * storage, Application_ptr * res_appli
     *res_application = (*storage)->head->application;   
     Skew_node_ptr head = (*storage)->head;
 
-    (*storage)->head = Skew_Heap_node_merge((*storage)->head->next, (*storage)->head->prev);
+    (*storage)->head = Skew_Heap_node_merge((*storage)->head->right, (*storage)->head->left);
 
     free(head);
     head = NULL;
@@ -219,11 +219,11 @@ Skew_node_ptr Skew_Heap_node_merge(Skew_node_ptr first, Skew_node_ptr second)
         second = tmp;
     }
 
-    first->prev = Skew_Heap_node_merge(second, first->prev);
+    first->left = Skew_Heap_node_merge(second, first->left);
 
-    Skew_node_ptr tmp = first->prev;
-    first->prev = first->next;
-    first->next = tmp;
+    Skew_node_ptr tmp = first->left;
+    first->left = first->right;
+    first->right = tmp;
 
     return first;
 }

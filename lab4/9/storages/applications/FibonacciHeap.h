@@ -9,8 +9,8 @@ typedef struct FH_node
     size_t rank;
 
     struct FH_node * child;
-    struct FH_node * prev;
-    struct FH_node * next;
+    struct FH_node * left;
+    struct FH_node * right;
 
 } FH_node, *FH_node_ptr;
 

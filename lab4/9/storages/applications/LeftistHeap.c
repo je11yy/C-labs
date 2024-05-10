@@ -43,16 +43,16 @@ Leftist_node_ptr Leftist_Heap_node_create(Application_ptr application)
     }
     node->application = application;
     node->distance = 0;
-    node->prev = NULL;
-    node->next = NULL;
+    node->left = NULL;
+    node->right = NULL;
     return node;
 }
 
 void Leftist_Heap_node_free(Leftist_node_ptr node)
 {
     if (!node) return;
-    Leftist_Heap_node_free(node->prev);
-    Leftist_Heap_node_free(node->next);
+    Leftist_Heap_node_free(node->left);
+    Leftist_Heap_node_free(node->right);
 
     if (node->application) free_application(node->application);
     free(node);
@@ -83,7 +83,7 @@ status Leftist_Heap_node_copy(Leftist_node_ptr * to, Leftist_node_ptr from)
     new->distance = from->distance;
 
     status error;
-    if ((error = Leftist_Heap_node_copy(&new->next, from->next)) != success || (error = Leftist_Heap_node_copy(&new->prev, from->prev)) != success)
+    if ((error = Leftist_Heap_node_copy(&new->right, from->right)) != success || (error = Leftist_Heap_node_copy(&new->left, from->left)) != success)
     {
         Leftist_Heap_node_free(from);
         Leftist_Heap_node_free(*to);
@@ -167,16 +167,16 @@ Leftist_node_ptr Leftist_Heap_node_merge(Leftist_node_ptr first, Leftist_node_pt
         second = tmp;
     }
 
-    first->next = Leftist_Heap_node_merge(first->next, second);
+    first->right = Leftist_Heap_node_merge(first->right, second);
 
-    if (first->next && (!first->prev || first->prev->distance < first->next->distance))
+    if (first->right && (!first->left || first->left->distance < first->right->distance))
     {
-        Leftist_node_ptr tmp = first->prev;
-        first->prev = first->next;
-        first->next = tmp;
+        Leftist_node_ptr tmp = first->left;
+        first->left = first->right;
+        first->right = tmp;
     }
 
-    first->distance = first->next == NULL ? 0 : first->next->distance + 1;
+    first->distance = first->right == NULL ? 0 : first->right->distance + 1;
 
     return first;
 }
@@ -190,7 +190,7 @@ status Leftist_Heap_delete_max(Leftist_Heap_ptr * storage, Application_ptr * res
     *res_application = (*storage)->head->application;   
     Leftist_node_ptr head = (*storage)->head;
 
-    (*storage)->head = Leftist_Heap_node_merge((*storage)->head->next, (*storage)->head->prev);
+    (*storage)->head = Leftist_Heap_node_merge((*storage)->head->right, (*storage)->head->left);
 
     free(head);
     head = NULL;

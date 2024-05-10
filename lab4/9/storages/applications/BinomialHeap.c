@@ -178,38 +178,38 @@ status Binomial_Heap_meld(Binomial_Heap_ptr * res, Binomial_Heap_ptr * first, Bi
     }
 
 
-    Binomial_Heap_node_ptr prev = NULL;
+    Binomial_Heap_node_ptr left = NULL;
     Binomial_Heap_node_ptr current = tmp->head;
-    Binomial_Heap_node_ptr next = tmp->head->brother;
+    Binomial_Heap_node_ptr right = tmp->head->brother;
 
-    while (next)
+    while (right)
     {
-        Binomial_Heap_node_ptr tmp_node = next->brother;
-        if (current->degree == next->degree && (!tmp_node || tmp_node->degree != next->degree))
+        Binomial_Heap_node_ptr tmp_node = right->brother;
+        if (current->degree == right->degree && (!tmp_node || tmp_node->degree != right->degree))
         {
-            if (applications_comparator(current->application, next->application) > 0)
+            if (applications_comparator(current->application, right->application) > 0)
             {
-                next->brother = current->son;
-                current->son = next;
+                right->brother = current->son;
+                current->son = right;
             }
             else
             {
-                current->brother = next->son;
-                next->son = current;
+                current->brother = right->son;
+                right->son = current;
 
-                if (current == tmp->head) tmp->head = next;
-                current = next;
+                if (current == tmp->head) tmp->head = right;
+                current = right;
             }
-            if (prev) prev->brother = current;
+            if (left) left->brother = current;
             current->degree++;
             current->brother = tmp_node;
-            next = tmp_node;
+            right = tmp_node;
         }
         else
         {
-            prev = current;
-            current = next;
-            next = next->brother;
+            left = current;
+            current = right;
+            right = right->brother;
         }
     }
     (*first)->head = (*second)->head = NULL;
@@ -252,16 +252,16 @@ status Binomial_Heap_delete_max(Binomial_Heap_ptr * storage, Application_ptr * r
     *res_application = (*storage)->max->application;
     Binomial_Heap_node_ptr max = (*storage)->max;
     Binomial_Heap_node_ptr current = (*storage)->head;
-    Binomial_Heap_node_ptr prev = NULL;
+    Binomial_Heap_node_ptr left = NULL;
     while (current && current != max)
     {
-        prev = current;
+        left = current;
         current = current->brother;
     }
 
     // убираем из списка корней
-    if (!prev) (*storage)->head = current->brother;
-    else prev->brother = max->brother;
+    if (!left) (*storage)->head = current->brother;
+    else left->brother = max->brother;
 
     Binomial_Heap_ptr heap = Binomial_Heap_create();
     if (!heap)
@@ -271,17 +271,17 @@ status Binomial_Heap_delete_max(Binomial_Heap_ptr * storage, Application_ptr * r
     }
 
     Binomial_Heap_node_ptr node = max->son;
-    Binomial_Heap_node_ptr next = node->brother;
+    Binomial_Heap_node_ptr right = node->brother;
     Binomial_Heap_node_ptr bro;
 
     // reverse children
-    while (next)
+    while (right)
     {
-        bro = next->brother;
-        next->brother = node;
+        bro = right->brother;
+        right->brother = node;
         node->brother = NULL;
-        node = next;
-        next = bro;
+        node = right;
+        right = bro;
     }
     heap->head = node;
     Binomial_Heap_ptr new = NULL;
