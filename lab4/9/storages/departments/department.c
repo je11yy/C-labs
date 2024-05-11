@@ -29,6 +29,7 @@ Operators_ptr operators_list_create()
     Operators_ptr operators = (Operators_ptr)malloc(sizeof(Operators));
     if (!operators) return NULL;
     operators->first = NULL;
+    operators->size = 0;
     return operators;
 }
 
@@ -51,7 +52,8 @@ Operator_ptr operator_create()
     Operator_ptr operator = (Operator_ptr)malloc(sizeof(Operator));
     if (!operator) return NULL;
     operator->name = operator_name_create();
-    operator->application = operator->next = NULL;
+    operator->application = NULL;
+    operator->next = NULL;
 
     return operator;
 }
@@ -100,7 +102,7 @@ Department_ptr department_create(int identifier, Application_storage_ptr applica
             free(department);
             return NULL;
         }
-        add_to_list(department->free_operators, new_operator);
+        add_operator_to_list(department->free_operators, new_operator);
     }
 
     return department;
@@ -111,6 +113,7 @@ void department_free(Department_ptr department)
     operators_list_free(department->busy_operators);
     operators_list_free(department->free_operators);
     department->applications->free(&department->applications->storage);
+    free(department->applications);
     department->applications = NULL;
     free(department);
     department = NULL;
@@ -140,6 +143,7 @@ void add_operator_to_list(Operators_ptr operators, Operator_ptr operator)
     if (!current)
     {
         operators->first = operator;
+        operators->size++;
         return;
     }
     while (current->next) current = current->next;
@@ -157,7 +161,7 @@ status make_busy_operator(Department_ptr * department, Application_ptr applicati
     operator->application = application;
     operator->work_time = create_work_time(start_time, min_handling_time, max_handling_time);
     if (!(operator->work_time)) return no_memory;
-    add_to_list((*department)->busy_operators, operator);
+    add_operator_to_list((*department)->busy_operators, operator);
     return success;
 }
 
@@ -177,7 +181,7 @@ status check_busy_operators(Department_ptr * department, time_t current_time)
             if (!prev) (*department)->busy_operators->first = current->next;
             else prev->next = current->next;
             target->next = NULL;
-            add_to_list((*department)->free_operators, target);
+            add_operator_to_list((*department)->free_operators, target);
         }
         prev = current;
         current = current->next;
