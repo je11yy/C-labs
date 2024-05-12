@@ -35,6 +35,7 @@ Operators_ptr operators_list_create()
 
 void operators_list_free(Operators_ptr operators)
 {
+    if (!operators) return;
     Operator_ptr current = operators->first;
     Operator_ptr next = NULL;
     while (current)
@@ -111,6 +112,7 @@ Department_ptr department_create(int identifier, Application_storage_ptr applica
 
 void department_free(Department_ptr department)
 {
+    if (!department) return;
     operators_list_free(department->busy_operators);
     operators_list_free(department->free_operators);
     department->applications->free(&department->applications->storage);
