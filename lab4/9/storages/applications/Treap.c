@@ -21,7 +21,6 @@ Treap_node_ptr Treap_node_create(Application_ptr application)
     node->left = NULL;
     node->right = NULL;
 
-    srand(time(NULL));
     node->priority = rand();
     return node;
 }
