@@ -51,6 +51,7 @@ Operator_ptr operator_create()
 {
     Operator_ptr operator = (Operator_ptr)malloc(sizeof(Operator));
     if (!operator) return NULL;
+    operator->work_time = NULL;
     operator->name = operator_name_create();
     operator->application = NULL;
     operator->next = NULL;
@@ -63,7 +64,7 @@ void operator_free(Operator_ptr operator)
     free(operator->name);
     operator->name = NULL;
     free_application(operator->application);
-    free(operator->work_time);
+    if (operator->work_time) free(operator->work_time);
     operator->work_time = NULL;
     operator->next = NULL;
     free(operator);
