@@ -85,7 +85,7 @@ Hash_Set_ptr HS_create()
     if (!set->elements)
     {
         free(set);
-        return no_memory;
+        return NULL;
     }
     return set;
 }
