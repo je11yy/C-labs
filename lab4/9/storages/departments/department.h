@@ -51,7 +51,7 @@ void operators_list_free(Operators_ptr operators);
 Operator_ptr operator_create();
 void operator_free(Operator_ptr operator);
 
-Department_ptr department_create(int identifier, Application_storage_ptr applications, int operators_count, double overload_coef);
+Department_ptr department_create(int identifier, application_storage_type applications_storage_type, int operators_count, double overload_coef);
 void department_free(Department_ptr department);
 
 Operator_ptr take_first(Operators_ptr operators);

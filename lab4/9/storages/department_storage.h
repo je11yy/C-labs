@@ -8,10 +8,10 @@
 
 typedef enum department_type
 {
-    HashSet_T,
-    DynamicArray_T,
-    BST_T,
-    Trie_T
+    HashSet_T = 0,
+    DynamicArray_T = 1,
+    BST_T = 2,
+    Trie_T = 3
 } department_type;
 
 typedef struct Department_storage
@@ -26,7 +26,7 @@ typedef struct Department_storage
 
 } Department_storage, *Department_storage_ptr;
 
-Department_storage_ptr department_storage_create(void * storage, department_type type);
+Department_storage_ptr department_storage_create(department_type type);
 
 
 #endif

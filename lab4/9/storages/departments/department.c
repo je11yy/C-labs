@@ -71,12 +71,17 @@ void operator_free(Operator_ptr operator)
     free(operator);
 }
 
-Department_ptr department_create(int identifier, Application_storage_ptr applications, int operators_count, double overload_coef)
+Department_ptr department_create(int identifier, application_storage_type applications_storage_type, int operators_count, double overload_coef)
 {
     Department_ptr department = (Department_ptr)malloc(sizeof(Department));
     if (!department) return NULL;
     department->identifier = identifier;
-    department->applications = applications;
+    department->applications = application_storage_create(applications_storage_type);
+    if (!department->applications)
+    {
+        free(department);
+        return NULL;
+    }
     department->overload_coef = overload_coef;
 
     department->busy_operators = operators_list_create();

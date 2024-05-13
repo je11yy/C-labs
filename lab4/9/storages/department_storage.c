@@ -1,6 +1,6 @@
 #include "department_storage.h"
 
-Department_storage_ptr department_storage_create(void * storage, department_type type)
+Department_storage_ptr department_storage_create(department_type type)
 {
     Department_storage_ptr department_storage = (Department_storage_ptr)malloc(sizeof(Department_storage));
     if (!department_storage) return NULL;

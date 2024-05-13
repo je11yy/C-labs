@@ -12,12 +12,12 @@
 
 typedef enum
 {
-    BinaryHeap_T,
-    BinomialHeap_T,
-    FibonacciHeap_T,
-    SkewHeap_T,
-    LeftistHeap_T,
-    Treap_T
+    BinaryHeap_T = 0,
+    BinomialHeap_T = 1,
+    FibonacciHeap_T = 2,
+    SkewHeap_T = 3,
+    LeftistHeap_T = 4,
+    Treap_T = 5
 } application_storage_type;
 
 typedef struct Application_storage
