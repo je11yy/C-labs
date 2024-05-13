@@ -1,5 +1,7 @@
 #include "department.h"
 
+#include "../../logger.h"
+
 Operators_work_time_ptr create_work_time(time_t start_time, unsigned int min_handling_time, unsigned int max_handling_time)
 {
     Operators_work_time_ptr work_time = (Operators_work_time_ptr)malloc(sizeof(Operators_work_time));
@@ -83,6 +85,7 @@ Department_ptr department_create(int identifier, application_storage_type applic
         return NULL;
     }
     department->overload_coef = overload_coef;
+    department->applications_count = 0;
 
     department->busy_operators = operators_list_create();
     if (!department->busy_operators)
@@ -160,7 +163,7 @@ void add_operator_to_list(Operators_ptr operators, Operator_ptr operator)
 }
 
 status make_busy_operator(Department_ptr * department, Application_ptr application, time_t start_time,
-    unsigned int min_handling_time, unsigned int max_handling_time)
+    unsigned int min_handling_time, unsigned int max_handling_time, Logger_ptr logger)
 {
     if (*department && !(*department)->free_operators->size) return no_free_operators;
     if (!department || !application) return invalid_function_argument;
@@ -170,10 +173,13 @@ status make_busy_operator(Department_ptr * department, Application_ptr applicati
     operator->work_time = create_work_time(start_time, min_handling_time, max_handling_time);
     if (!(operator->work_time)) return no_memory;
     add_operator_to_list((*department)->busy_operators, operator);
+    // handling application log
+    request_handling_started(logger, "", start_time);
+
     return success;
 }
 
-status check_busy_operators(Department_ptr * department, time_t current_time)
+status check_busy_operators(Department_ptr * department, time_t current_time, Logger_ptr logger)
 {
     if (!*department) return invalid_function_argument;
     if (!(*department)->busy_operators->size) return success;
@@ -183,15 +189,18 @@ status check_busy_operators(Department_ptr * department, time_t current_time)
     Operator_ptr target = NULL;
     while (current)
     {
-        if (difftime(current_time, current->work_time->end_time) >= 0)
+        if (difftime(current_time, current->work_time->end_time) > 0)
         {
             target = current;
             if (!prev) (*department)->busy_operators->first = current->next;
             else prev->next = current->next;
             target->next = NULL;
             add_operator_to_list((*department)->free_operators, target);
+            // finished application log
+            request_handling_finished(logger, "", current_time);
         }
         prev = current;
         current = current->next;
     }
+    return success;
 }

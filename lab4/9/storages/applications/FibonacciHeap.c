@@ -5,9 +5,14 @@ Fibonacci_Heap_ptr Fibonacci_Heap_create()
 {
     Fibonacci_Heap_ptr heap = (Fibonacci_Heap_ptr)malloc(sizeof(Fibonacci_Heap));
     if (!heap) return NULL;
+    return heap;
+}
+
+status Fibonacci_Heap_set_null(Fibonacci_Heap_ptr heap)
+{
     heap->size = 0;
     heap->max = NULL;
-    return heap;
+    return success;
 }
 
 status Fibonacci_Heap_copy(Fibonacci_Heap_ptr * to, Fibonacci_Heap_ptr from)
@@ -93,20 +98,11 @@ status Fibonacci_Heap_node_copy(FH_node_ptr * to, FH_node_ptr from)
     return success;
 }
 
-status Fibonacci_Heap_set_null(Fibonacci_Heap_ptr * storage)
-{
-    if (!(*storage)) return invalid_function_argument;
-
-    (*storage)->max = NULL;
-    (*storage)->size = 0;
-    return success;
-}
-
 void Fibonacci_Heap_free(Fibonacci_Heap_ptr * storage)
 {
     if (!(*storage)) return;
     if ((*storage)->max) Fibonacci_Heap_node_free((*storage)->max);
-    Fibonacci_Heap_set_null(storage);
+    Fibonacci_Heap_set_null(*storage);
     free(*storage);
     *storage = NULL;
 }

@@ -39,5 +39,6 @@ void HS_free(Hash_Set_ptr set);
 status HS_insert(Hash_Set_ptr set, int key, Department_ptr department);
 status HS_rebuild(Hash_Set_ptr set);
 status HS_find(Hash_Set_ptr set, int key, Department_ptr * result);
+status HS_set_null(Hash_Set_ptr set);
 
 #endif

@@ -31,6 +31,7 @@ typedef struct Application_storage
     status (*delete_max) (void ** storage, Application_ptr * res_application);
     status (*merge) (void ** res_storage, void ** first, void ** second);
     status (*meld) (void ** res_storage, void ** first, void ** second);
+    status (*set_null) (void * storage);
 
 } Application_storage, *Application_storage_ptr;
 

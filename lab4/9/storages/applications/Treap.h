@@ -35,4 +35,5 @@ status Treap_merge(Treap_ptr * res, Treap_ptr * first, Treap_ptr * second);
 
 status Treap_get_max(Treap_ptr * storage, Application_ptr * res_application);
 status Treap_delete_max(Treap_ptr * storage, Application_ptr * res_application);
+status Treap_set_null(Treap_ptr heap);
 #endif

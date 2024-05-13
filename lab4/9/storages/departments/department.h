@@ -2,6 +2,7 @@
 #define _DEPARTMENT_H
 
 #include "../application_storage.h"
+#include "../../logger.h"
 
 typedef struct Operators_work_time
 {
@@ -32,6 +33,7 @@ typedef struct Department
 {
     int identifier;
     Application_storage_ptr applications;
+    size_t applications_count;
 
     Operators_ptr busy_operators;
 
@@ -59,7 +61,6 @@ Operator_ptr take_free_operator(Department_ptr * department);
 Operator_ptr take_busy_operator(Department_ptr * department);
 void add_operator_to_list(Operators_ptr operators, Operator_ptr operator);
 status make_busy_operator(Department_ptr * department, Application_ptr application, time_t start_time,
-    unsigned int min_handling_time, unsigned int max_handling_time);
-status check_busy_operators(Department_ptr * department, time_t current_time);
-
+    unsigned int min_handling_time, unsigned int max_handling_time, Logger_ptr logger);
+status check_busy_operators(Department_ptr * department, time_t current_time, Logger_ptr logger);
 #endif

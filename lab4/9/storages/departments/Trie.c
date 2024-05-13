@@ -17,16 +17,21 @@ void Trie_node_free(Trie_node_ptr node)
     node = NULL;
 }
 
-Trie_ptr Trie_create()
+status Trie_set_null(Trie_ptr tree)
 {
-    Trie_ptr tree = (Trie_ptr)malloc(sizeof(Trie));
-    if (!tree) return NULL;
     tree->root = Trie_node_create();
     if (!tree->root)
     {
         free(tree);
-        return NULL;
+        return no_memory;
     }
+    return success;
+}
+
+Trie_ptr Trie_create()
+{
+    Trie_ptr tree = (Trie_ptr)malloc(sizeof(Trie));
+    if (!tree) return NULL;
     return tree;
 }
 

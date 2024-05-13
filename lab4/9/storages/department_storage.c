@@ -1,5 +1,6 @@
 #include "department_storage.h"
 
+
 Department_storage_ptr department_storage_create(department_type type)
 {
     Department_storage_ptr department_storage = (Department_storage_ptr)malloc(sizeof(Department_storage));
@@ -15,9 +16,10 @@ Department_storage_ptr department_storage_create(department_type type)
                 free(department_storage);
                 return NULL;
             }
-            department_storage->insert =   (status (*) (void *, int, Department_ptr)) HS_insert;
-            department_storage->find   = (status (*) (void *, int, Department_ptr *)) HS_find;
-            department_storage->free   =                        (status (*) (void *)) HS_free;
+            department_storage->insert   =     (status (*) (void *, int, Department_ptr)) HS_insert;
+            department_storage->find     =   (status (*) (void *, int, Department_ptr *)) HS_find;
+            department_storage->free     =                            (void (*) (void *)) HS_free;
+            department_storage->set_null =                       (status (*) (void*)) HS_set_null;
             break;
         case DynamicArray_T:
             storage = dynamic_array_create();
@@ -26,9 +28,10 @@ Department_storage_ptr department_storage_create(department_type type)
                 free(department_storage);
                 return NULL;
             }
-            department_storage->insert =   (status (*) (void *, int, Department_ptr)) dynamic_array_insert;
-            department_storage->find   = (status (*) (void *, int, Department_ptr *)) dynamic_array_find;
-            department_storage->free   =                        (status (*) (void *)) dynamic_array_free;
+            department_storage->insert   =     (status (*) (void *, int, Department_ptr)) dynamic_array_insert;
+            department_storage->find     =   (status (*) (void *, int, Department_ptr *)) dynamic_array_find;
+            department_storage->free     =                            (void (*) (void *)) dynamic_array_free;
+            department_storage->set_null =                           (status (*) (void*)) dynamic_array_set_null;
             break;
         case BST_T:
             storage = BST_create();
@@ -37,10 +40,11 @@ Department_storage_ptr department_storage_create(department_type type)
                 free(department_storage);
                 return NULL;
             }
-            department_storage->insert =   (status (*) (void *, int, Department_ptr)) BST_insert;
-            department_storage->find   = (status (*) (void *, int, Department_ptr *)) BST_find;
-            department_storage->free   =                        (status (*) (void *)) BST_free;
-            break;
+            department_storage->insert   =     (status (*) (void *, int, Department_ptr)) BST_insert;
+            department_storage->find     =   (status (*) (void *, int, Department_ptr *)) BST_find;
+            department_storage->free     =                            (void (*) (void *)) BST_free;
+            department_storage->set_null =                           (status (*) (void*)) BST_set_null;
+            break; 
         case Trie_T:
             storage = Trie_create();
             if (!storage)
@@ -48,10 +52,17 @@ Department_storage_ptr department_storage_create(department_type type)
                 free(department_storage);
                 return NULL;
             }
-            department_storage->insert =   (status (*) (void *, int, Department_ptr)) Trie_insert;
-            department_storage->find   = (status (*) (void *, int, Department_ptr *)) Trie_find;
-            department_storage->free   =                        (status (*) (void *)) Trie_free;
+            department_storage->insert   =     (status (*) (void *, int, Department_ptr)) Trie_insert;
+            department_storage->find     =   (status (*) (void *, int, Department_ptr *)) Trie_find;
+            department_storage->free     =                            (void (*) (void *)) Trie_free;
+            department_storage->set_null =                           (status (*) (void*)) Trie_set_null;
             break;
+    }
+    if (department_storage->set_null(department_storage->storage) != success)
+    {
+        department_storage->free(department_storage->storage);
+        free(department_storage);
+        return NULL;
     }
     return department_storage;
 }

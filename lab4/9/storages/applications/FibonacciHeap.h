@@ -29,8 +29,6 @@ FH_node_ptr Fibonacci_Heap_node_create(Application_ptr application);
 void Fibonacci_Heap_node_free(FH_node_ptr node);
 status Fibonacci_Heap_node_copy(FH_node_ptr * to, FH_node_ptr from);
 
-status Fibonacci_Heap_set_null(Fibonacci_Heap_ptr * storage);
-
 status Fibonacci_Heap_meld(Fibonacci_Heap_ptr * res, Fibonacci_Heap_ptr * first, Fibonacci_Heap_ptr * second);
 status Fibonacci_Heap_merge(Fibonacci_Heap_ptr * res, Fibonacci_Heap_ptr * first, Fibonacci_Heap_ptr * second);
 
@@ -38,6 +36,7 @@ status Fibonacci_Heap_get_max(Fibonacci_Heap_ptr * storage, Application_ptr * re
 status Fibonacci_Heap_delete_max(Fibonacci_Heap_ptr * storage, Application_ptr * res_application);
 
 status Fibonacci_Heap_insert(Fibonacci_Heap_ptr * storage, Application_ptr application);
+status Fibonacci_Heap_set_null(Fibonacci_Heap_ptr heap);
 
 
 #endif

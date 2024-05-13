@@ -19,8 +19,11 @@ typedef struct Department_storage
     void * storage;
     department_type type;
 
+    size_t size;
+
     status (*insert) (void * storage, int key, Department_ptr dep);
     status (*find) (void * storage, int key, Department_ptr * dep);
+    status (*set_null) (void * storage);
 
     void (*free) (void * storage);
 

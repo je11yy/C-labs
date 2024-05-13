@@ -29,5 +29,6 @@ void dynamic_array_free(Dynamic_Array_ptr array);
 
 status dynamic_array_insert(Dynamic_Array_ptr array, int key, Department_ptr department);
 status dynamic_array_find(Dynamic_Array_ptr array, int key, Department_ptr * result);
+status dynamic_array_set_null(Dynamic_Array_ptr array);
 
 #endif

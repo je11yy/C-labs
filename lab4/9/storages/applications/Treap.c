@@ -4,9 +4,14 @@ Treap_ptr Treap_create()
 {
     Treap_ptr heap = (Treap_ptr)malloc(sizeof(Treap));
     if (!heap) return NULL;
+    return heap;
+}
+
+status Treap_set_null(Treap_ptr heap)
+{
     heap->root = NULL;
     heap->size = 0;
-    return heap;
+    return success;
 }
 
 Treap_node_ptr Treap_node_create(Application_ptr application)

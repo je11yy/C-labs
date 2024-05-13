@@ -23,6 +23,7 @@ Application_storage_ptr application_storage_create(application_storage_type type
         storage->delete_max = (status (*)(void **, Application_ptr * res_application)) Binary_Heap_delete_max;
         storage->merge = (status (*)(void **, void **, void **)) Binary_Heap_merge;
         storage->meld = (status (*)(void **, void **, void **)) Binary_Heap_meld;
+        storage->set_null = (status (*) (void *)) Binary_Heap_set_null;
         break;
     
     case BinomialHeap_T:
@@ -38,6 +39,7 @@ Application_storage_ptr application_storage_create(application_storage_type type
         storage->delete_max = (status (*)(void **, Application_ptr * res_application)) Binomial_Heap_delete_max;
         storage->merge = (status (*)(void **, void **, void **)) Binomial_Heap_merge;
         storage->meld = (status (*)(void **, void **, void **)) Binomial_Heap_meld;
+        storage->set_null = (status (*) (void *)) Binomial_Heap_set_null;
         break;
     
     case FibonacciHeap_T:
@@ -53,6 +55,7 @@ Application_storage_ptr application_storage_create(application_storage_type type
         storage->delete_max = (status (*)(void **, Application_ptr * res_application)) Fibonacci_Heap_delete_max;
         storage->merge = (status (*)(void **, void **, void **)) Fibonacci_Heap_merge;
         storage->meld = (status (*)(void **, void **, void **)) Fibonacci_Heap_meld;
+        storage->set_null = (status (*) (void *)) Fibonacci_Heap_set_null;
         break;
     
     case SkewHeap_T:
@@ -68,6 +71,7 @@ Application_storage_ptr application_storage_create(application_storage_type type
         storage->delete_max = (status (*)(void **, Application_ptr * res_application)) Skew_Heap_delete_max;
         storage->merge = (status (*)(void **, void **, void **)) Skew_Heap_merge;
         storage->meld = (status (*)(void **, void **, void **)) Skew_Heap_meld;
+        storage->set_null = (status (*) (void *)) Skew_Heap_set_null;
         break;
     
     case LeftistHeap_T:
@@ -83,6 +87,7 @@ Application_storage_ptr application_storage_create(application_storage_type type
         storage->delete_max = (status (*)(void **, Application_ptr * res_application)) Leftist_Heap_delete_max;
         storage->merge = (status (*)(void **, void **, void **)) Leftist_Heap_merge;
         storage->meld = (status (*)(void **, void **, void **)) Leftist_Heap_meld;
+        storage->set_null = (status (*) (void *)) Leftist_Heap_set_null;
         break;
     
     case Treap_T:
@@ -98,6 +103,7 @@ Application_storage_ptr application_storage_create(application_storage_type type
         storage->delete_max = (status (*)(void **, Application_ptr * res_application)) Treap_delete_max;
         storage->merge = (status (*)(void **, void **, void **)) Treap_merge;
         storage->meld = (status (*)(void **, void **, void **)) Treap_meld;
+        storage->set_null = (status (*) (void *)) Treap_set_null;
         break;
     
     default:

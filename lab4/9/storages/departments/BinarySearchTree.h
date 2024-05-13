@@ -27,5 +27,6 @@ void BST_free(BST_ptr bst);
 status BST_insert(BST_ptr tree, int key, Department_ptr department);
 void BST_find_node(BST_ptr tree, int key, BST_node_ptr * node);
 status BST_find(BST_ptr tree, int key, Department_ptr * department);
+status BST_set_null(BST_ptr bst);
 
 #endif

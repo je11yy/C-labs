@@ -28,5 +28,6 @@ int find_digits_count_in_number(int number);
 
 status Trie_find(Trie_ptr tree, int key, Department_ptr * result);
 status Trie_insert(Trie_ptr tree, int key, Department_ptr department);
+status Trie_set_null(Trie_ptr tree);
 
 #endif

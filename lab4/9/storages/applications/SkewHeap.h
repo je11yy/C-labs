@@ -27,7 +27,7 @@ Skew_node_ptr Skew_Heap_node_create(Application_ptr application);
 void Skew_Heap_node_free(Skew_node_ptr node);
 status Skew_Heap_node_copy(Skew_node_ptr * to, Skew_node_ptr from);
 
-status Skew_Heap_set_null(Skew_Heap_ptr * storage);
+status Skew_Heap_set_null(Skew_Heap_ptr heap);
 
 status Skew_Heap_meld(Skew_Heap_ptr * res, Skew_Heap_ptr * first, Skew_Heap_ptr * second);
 status Skew_Heap_merge(Skew_Heap_ptr * res, Skew_Heap_ptr * first, Skew_Heap_ptr * second);

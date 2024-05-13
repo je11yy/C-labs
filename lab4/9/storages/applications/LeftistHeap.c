@@ -9,6 +9,13 @@ Leftist_Heap_ptr Leftist_Heap_create()
     return heap;
 }
 
+status Leftist_Heap_set_null(Leftist_Heap_ptr heap)
+{
+    heap->head = NULL;
+    heap->size = 0;
+    return success;
+}
+
 void Leftist_Heap_free(Leftist_Heap_ptr * storage)
 {
     if (!(*storage)) return;
@@ -91,16 +98,6 @@ status Leftist_Heap_node_copy(Leftist_node_ptr * to, Leftist_node_ptr from)
     }
 
     *to = new;
-
-    return success;
-}
-
-status Leftist_Heap_set_null(Leftist_Heap_ptr * storage)
-{
-    if (!(*storage)) return invalid_function_argument;
-
-    (*storage)->head = NULL;
-    (*storage)->size = 0;
 
     return success;
 }

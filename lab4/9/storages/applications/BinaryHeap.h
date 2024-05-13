@@ -23,6 +23,6 @@ status Binary_Heap_insert(Binary_Heap_ptr * storage, Application_ptr application
 
 status Binary_Heap_sift_down(Binary_Heap_ptr * storage, size_t i);
 status Binary_Heap_sift_up(Binary_Heap_ptr * storage);
-status Binary_Heap_set_null(Binary_Heap_ptr * storage);
+status Binary_Heap_set_null(Binary_Heap_ptr heap);
 
 #endif

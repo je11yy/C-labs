@@ -9,6 +9,13 @@ Skew_Heap_ptr Skew_Heap_create()
     return heap;
 }
 
+status Skew_Heap_set_null(Skew_Heap_ptr heap)
+{
+    heap->head = NULL;
+    heap->size = 0;
+    return success;
+}
+
 void Skew_Heap_free(Skew_Heap_ptr * storage)
 {
     if (!(*storage)) return;
@@ -88,16 +95,6 @@ status Skew_Heap_node_copy(Skew_node_ptr * to, Skew_node_ptr from)
     }
 
     *to = new;
-
-    return success;
-}
-
-status Skew_Heap_set_null(Skew_Heap_ptr * storage)
-{
-    if (!(*storage)) return invalid_function_argument;
-
-    (*storage)->head = NULL;
-    (*storage)->size = 0;
 
     return success;
 }

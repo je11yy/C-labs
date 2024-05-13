@@ -38,5 +38,6 @@ status Binomial_Heap_get_max(Binomial_Heap_ptr * storage, Application_ptr * res_
 status Binomial_Heap_delete_max(Binomial_Heap_ptr * storage, Application_ptr * res_application);
 
 status Binomial_Heap_insert(Binomial_Heap_ptr * storage, Application_ptr application);
+status Binomial_Heap_set_null(Binomial_Heap_ptr heap);
 
 #endif

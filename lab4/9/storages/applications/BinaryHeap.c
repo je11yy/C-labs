@@ -42,15 +42,16 @@ status Binary_Heap_sift_up(Binary_Heap_ptr * storage)
     return success;
 }
 
-status Binary_Heap_set_null(Binary_Heap_ptr * storage)
+status Binary_Heap_set_null(Binary_Heap_ptr heap)
 {
-    if (!(*storage))
+    heap->size = 0;
+    heap->capacity = 16;
+    heap->elements = (Application_ptr*)calloc(heap->capacity, sizeof(Application_ptr));
+    if (!(heap->elements))
     {
-        Binary_Heap_free(storage);
-        return invalid_function_argument;
+        free(heap);
+        return no_memory;
     }
-    for (size_t i = 0; i < (*storage)->size; ++i) (*storage)->elements[i] = NULL;
-    (*storage)->size = 0;
     return success;
 }
 
@@ -58,14 +59,6 @@ Binary_Heap_ptr Binary_Heap_create()
 {
     Binary_Heap_ptr heap = (Binary_Heap_ptr)malloc(sizeof(Binary_Heap));
     if (!heap) return NULL;
-    heap->size = 0;
-    heap->capacity = 16;
-    heap->elements = (Application_ptr*)calloc(heap->capacity, sizeof(Application_ptr));
-    if (!(heap->elements))
-    {
-        free(heap);
-        return NULL;
-    }
     return heap;
 }
 
@@ -167,10 +160,10 @@ status Binary_Heap_meld(Binary_Heap_ptr * res, Binary_Heap_ptr * first, Binary_H
 
     for (size_t i = 0; i < heap->size / 2; ++i) Binary_Heap_sift_down(&heap, heap->size / 2 - i);
 
-    Binary_Heap_set_null(first);
+    Binary_Heap_set_null(*first);
     Binary_Heap_free(first);
 
-    Binary_Heap_set_null(second);
+    Binary_Heap_set_null(*second);
     Binary_Heap_free(second);
 
     *res = heap;
