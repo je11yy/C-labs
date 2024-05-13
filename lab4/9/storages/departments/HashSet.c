@@ -10,12 +10,7 @@ status HS_set_null(Hash_Set_ptr set)
     set->size = 3;
     set->max_chain_size = 0;
     set->min_chain_size = 0;
-    set->elements = HS_element_array_create(set->size);
-    if (!set->elements)
-    {
-        free(set);
-        return no_memory;
-    }
+    set->elements = NULL;
     return success;
 }
 
@@ -83,6 +78,15 @@ Hash_Set_ptr HS_create()
 {
     Hash_Set_ptr set = (Hash_Set_ptr)malloc(sizeof(Hash_Set));
     if (!set) return NULL;
+    set->size = 3;
+    set->max_chain_size = 0;
+    set->min_chain_size = 0;
+    set->elements = HS_element_array_create(set->size);
+    if (!set->elements)
+    {
+        free(set);
+        return no_memory;
+    }
     return set;
 }
 

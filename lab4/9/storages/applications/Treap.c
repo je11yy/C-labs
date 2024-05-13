@@ -4,6 +4,8 @@ Treap_ptr Treap_create()
 {
     Treap_ptr heap = (Treap_ptr)malloc(sizeof(Treap));
     if (!heap) return NULL;
+    heap->root = NULL;
+    heap->size = 0;
     return heap;
 }
 

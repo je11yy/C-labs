@@ -23,6 +23,7 @@ BST_ptr BST_create()
 {
     BST_ptr bst = (BST_ptr)malloc(sizeof(BST));
     if (!bst) return NULL;
+    bst->root = NULL;
     return bst;
 }
 

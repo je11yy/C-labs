@@ -4,6 +4,8 @@ Binomial_Heap_ptr Binomial_Heap_create()
 {
     Binomial_Heap_ptr heap = (Binomial_Heap_ptr)malloc(sizeof(Binomial_Heap));
     if (!heap) return NULL;
+    heap->head = NULL;
+    heap->max = NULL;
     return heap;
 }
 

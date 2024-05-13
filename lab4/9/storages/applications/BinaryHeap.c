@@ -46,12 +46,7 @@ status Binary_Heap_set_null(Binary_Heap_ptr heap)
 {
     heap->size = 0;
     heap->capacity = 16;
-    heap->elements = (Application_ptr*)calloc(heap->capacity, sizeof(Application_ptr));
-    if (!(heap->elements))
-    {
-        free(heap);
-        return no_memory;
-    }
+    heap->elements = NULL;
     return success;
 }
 
@@ -59,6 +54,14 @@ Binary_Heap_ptr Binary_Heap_create()
 {
     Binary_Heap_ptr heap = (Binary_Heap_ptr)malloc(sizeof(Binary_Heap));
     if (!heap) return NULL;
+    heap->size = 0;
+    heap->capacity = 16;
+    heap->elements = (Application_ptr*)calloc(heap->capacity, sizeof(Application_ptr));
+    if (!(heap->elements))
+    {
+        free(heap);
+        return no_memory;
+    }
     return heap;
 }
 

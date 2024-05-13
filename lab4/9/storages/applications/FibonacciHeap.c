@@ -5,6 +5,8 @@ Fibonacci_Heap_ptr Fibonacci_Heap_create()
 {
     Fibonacci_Heap_ptr heap = (Fibonacci_Heap_ptr)malloc(sizeof(Fibonacci_Heap));
     if (!heap) return NULL;
+    heap->size = 0;
+    heap->max = NULL;
     return heap;
 }
 

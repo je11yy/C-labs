@@ -46,12 +46,7 @@ status dynamic_array_set_null(Dynamic_Array_ptr array)
     array->size = 0;
     array->capacity = 4;
 
-    array->array = dynamic_array_element_array_create(array->capacity);
-    if (!array->array)
-    {
-        free(array);
-        return no_memory;
-    }
+    array->array = NULL;
     return success;
 }
 
@@ -59,6 +54,15 @@ Dynamic_Array_ptr dynamic_array_create()
 {
     Dynamic_Array_ptr array = (Dynamic_Array_ptr)malloc(sizeof(Dynamic_Array));
     if (!array) return NULL;
+    array->size = 0;
+    array->capacity = 4;
+
+    array->array = dynamic_array_element_array_create(array->capacity);
+    if (!array->array)
+    {
+        free(array);
+        return no_memory;
+    }
     return array;
 }
 

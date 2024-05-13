@@ -58,11 +58,6 @@ Department_storage_ptr department_storage_create(department_type type)
             department_storage->set_null =                           (status (*) (void*)) Trie_set_null;
             break;
     }
-    if (department_storage->set_null(department_storage->storage) != success)
-    {
-        department_storage->free(department_storage->storage);
-        free(department_storage);
-        return NULL;
-    }
+    department_storage->storage = storage;
     return department_storage;
 }
