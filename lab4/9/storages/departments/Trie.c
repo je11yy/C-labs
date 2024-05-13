@@ -31,7 +31,7 @@ Trie_ptr Trie_create()
     if (!tree->root)
     {
         free(tree);
-        return no_memory;
+        return NULL;
     }
     return tree;
 }

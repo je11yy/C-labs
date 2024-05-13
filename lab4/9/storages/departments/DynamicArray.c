@@ -61,7 +61,7 @@ Dynamic_Array_ptr dynamic_array_create()
     if (!array->array)
     {
         free(array);
-        return no_memory;
+        return NULL;
     }
     return array;
 }

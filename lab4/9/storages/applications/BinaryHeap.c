@@ -60,7 +60,7 @@ Binary_Heap_ptr Binary_Heap_create()
     if (!(heap->elements))
     {
         free(heap);
-        return no_memory;
+        return NULL;
     }
     return heap;
 }
