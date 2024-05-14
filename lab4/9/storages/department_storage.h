@@ -32,4 +32,6 @@ typedef struct Department_storage
 Department_storage_ptr department_storage_create(department_type type);
 
 
+status departments_storage_insert_application(Department_storage_ptr departments, Application_ptr application);
+
 #endif

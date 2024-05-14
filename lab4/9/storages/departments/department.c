@@ -123,8 +123,7 @@ void department_free(Department_ptr department)
     if (!department) return;
     operators_list_free(department->busy_operators);
     operators_list_free(department->free_operators);
-    department->applications->free(&department->applications->storage);
-    free(department->applications);
+    application_storage_free(department->applications);
     department->applications = NULL;
     free(department);
     department = NULL;
@@ -150,6 +149,7 @@ Operator_ptr take_busy_operator(Department_ptr * department)
 
 void add_operator_to_list(Operators_ptr operators, Operator_ptr operator)
 {
+    operator->next = NULL;
     Operator_ptr current = operators->first;
     if (!current)
     {
@@ -187,15 +187,24 @@ status check_busy_operators(Department_ptr * department, time_t current_time, Lo
     Operator_ptr current = (*department)->busy_operators->first;
     Operator_ptr prev = NULL;
     Operator_ptr target = NULL;
+
     while (current)
     {
-        if (difftime(current_time, current->work_time->end_time) > 0)
+        if (current_time - current->work_time->end_time <= 0)
         {
             target = current;
             if (!prev) (*department)->busy_operators->first = current->next;
             else prev->next = current->next;
+
+            (*department)->busy_operators->size--;
             target->next = NULL;
             add_operator_to_list((*department)->free_operators, target);
+
+            free_application(target->application);
+            free(target->work_time);
+            target->application = NULL;
+            target->work_time = NULL;
+
             // finished application log
             request_handling_finished(logger, "", current_time);
         }
@@ -203,4 +212,11 @@ status check_busy_operators(Department_ptr * department, time_t current_time, Lo
         current = current->next;
     }
     return success;
+}
+
+status department_insert_application(Department_ptr department, Application_ptr application)
+{
+    if (!department || !application) return invalid_function_argument;
+    department->applications_count++;
+    return department->applications->insert(&department->applications->storage, application);
 }

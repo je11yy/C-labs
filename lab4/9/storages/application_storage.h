@@ -36,5 +36,7 @@ typedef struct Application_storage
 } Application_storage, *Application_storage_ptr;
 
 Application_storage_ptr application_storage_create(application_storage_type type);
+void application_storage_free(Application_storage_ptr storage);
+void application_storage_take_application(Application_storage_ptr storage, Application_ptr * appl);
 
 #endif

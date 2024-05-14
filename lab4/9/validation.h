@@ -7,32 +7,16 @@
 #include <ctype.h>
 #include "errors.h"
 #include "string.h"
-
-typedef enum
-{
-    BinaryHeap = 1,
-    BinomialHeap = 2,
-    FibonacciHeap = 3,
-    SkewHeap = 4,
-    LeftistHeap = 5,
-    Treap = 6
-} storage_of_applications;
-
-typedef enum
-{
-    HashSet = 1,
-    DinamicArray = 2,
-    BinarySearchTree = 3,
-    Trie = 4
-} department_storage;
+#include "storages/application_storage.h"
+#include "storages/department_storage.h"
 
 status unsigned_int_check(char * number);
 
 status double_check(char * number);
 
-status validate_storage_structure(char * string, int * structure);
+status validate_storage_structure(char * string, application_storage_type * structure);
 
-status validate_departments_structure(char * string, int * structure);
+status validate_departments_structure(char * string, department_type * structure);
 
 status is_leap_year(const int year);
 
@@ -40,8 +24,8 @@ status validate_time(char * time);
 
 status validate_application_time_and_departments_count(FILE * file, int * argument);
 
-status validate_start_and_end(FILE * file, time_t * time);
+status validate_start_and_end(FILE * file, time_t * time_1);
 
-status validate_structures(FILE * file, int * applications_storage, int * departments_storage);
+status validate_structures(FILE * file, application_storage_type * applications_storage, department_type * departments_storage);
 
 #endif

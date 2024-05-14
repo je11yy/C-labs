@@ -1,4 +1,8 @@
 #include "validation.h"
+#include "storages/application_storage.h"
+#include "storages/department_storage.h"
+
+#define _GNU_SOURCE
 
 status unsigned_int_check(char * number)
 {
@@ -26,7 +30,7 @@ status double_check(char * number)
     return success;
 }
 
-status validate_storage_structure(char * string, int * structure)
+status validate_storage_structure(char * string, application_storage_type * structure)
 {
     if (string[strlen(string) - 1] == '\n') string[strlen(string) - 1] = 0;
     size_t storages_types_count = 6;
@@ -43,14 +47,14 @@ status validate_storage_structure(char * string, int * structure)
     {
         if (strcmp(storages_types[i], string) == success)
         {
-            *structure = i + 1;
+            *structure = i;
             return success;
         }
     }
     return fail;
 }
 
-status validate_departments_structure(char * string, int * structure)
+status validate_departments_structure(char * string, department_type * structure)
 {
     if (string[strlen(string) - 1] == '\n') string[strlen(string) - 1] = 0;
     size_t department_types_count = 4;
@@ -65,7 +69,7 @@ status validate_departments_structure(char * string, int * structure)
     {
         if (strcmp(departments_types[i], string) == success)
         {
-            *structure = i + 1;
+            *structure = i;
             return success;
         }
     }
@@ -102,7 +106,7 @@ status validate_time(char * time)
     return success;
 }
 
-status validate_structures(FILE * file, int * applications_storage, int * departments_storage)
+status validate_structures(FILE * file, application_storage_type * applications_storage, department_type * departments_storage)
 {
     char * line = NULL;
     size_t size = 0;
@@ -130,7 +134,7 @@ status validate_structures(FILE * file, int * applications_storage, int * depart
     return success;
 }
 
-status validate_start_and_end(FILE * file, time_t * time)
+status validate_start_and_end(FILE * file, time_t * time_1)
 {
     char * line = NULL;
     size_t size = 0;
@@ -140,9 +144,10 @@ status validate_start_and_end(FILE * file, time_t * time)
         fclose(file);
         return arguments_error;
     }
-    struct tm tm;
-    strptime(line, "%Y-%m-%d %H:%M:%S", &tm);
-    *time = mktime(&tm);
+    struct tm tm_1 = {};
+    strptime(line, "%Y-%m-%d %H:%M:%S", &tm_1);
+    time_t cur_time = mktime(&tm_1);
+    *time_1 = cur_time;
     free(line);
     line = NULL;
     size = 0;

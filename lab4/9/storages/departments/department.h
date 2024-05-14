@@ -63,4 +63,7 @@ void add_operator_to_list(Operators_ptr operators, Operator_ptr operator);
 status make_busy_operator(Department_ptr * department, Application_ptr application, time_t start_time,
     unsigned int min_handling_time, unsigned int max_handling_time, Logger_ptr logger);
 status check_busy_operators(Department_ptr * department, time_t current_time, Logger_ptr logger);
+
+status department_insert_application(Department_ptr department, Application_ptr application);
+
 #endif

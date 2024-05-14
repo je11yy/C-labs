@@ -186,9 +186,14 @@ status Binary_Heap_get_max(Binary_Heap_ptr * storage, Application_ptr * res_appl
 status Binary_Heap_delete_max(Binary_Heap_ptr * storage, Application_ptr * res_application)
 {
     if (Binary_Heap_get_max(storage, res_application) != success) return invalid_function_argument;
-    (*storage)->elements[0] = (*storage)->elements[(*storage)->size - 1];
-    Binary_Heap_sift_down(storage, 0);
+
+    if ((*storage)->size == 0) return success;
+
+    if ((*storage)->size > 1) (*storage)->elements[0] = (*storage)->elements[(*storage)->size - 1];
+    else (*storage)->elements[0] = NULL;
     (*storage)->size--;
+    Binary_Heap_sift_down(storage, 0);
+
     return success;
 }
 

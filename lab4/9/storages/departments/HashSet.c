@@ -29,7 +29,6 @@ void HS_element_free(HS_element_ptr element)
 {
     if (!element) return;
     HS_element_free(element->next);
-
     department_free(element->department);
     element->next = NULL;
     free(element);
@@ -100,29 +99,19 @@ void HS_free(Hash_Set_ptr set)
 
 status HS_insert(Hash_Set_ptr set, int key, Department_ptr department)
 {
-    printf("HERE\n");
     if (!set || !department) return invalid_function_argument;
 
     HS_element_ptr element = HS_element_create(key, department);
     if (!element) return no_memory;
 
     int index = hash_function(key, set->size);
-    printf("HERE 1\n");
-    printf("%d %ld\n", index, set->size);
-
     element->next = set->elements[index];
-    printf("HERE 2\n");
     set->elements[index] = element;
-    printf("HERE 3\n");
     if (element->next) element->next_elements_count = element->next->next_elements_count;
-    printf("HERE 4\n");
     if (set->max_chain_size < element->next_elements_count) set->max_chain_size = element->next_elements_count;
-    printf("HERE 5\n");
     if (set->min_chain_size > element->next_elements_count) set->max_chain_size = element->next_elements_count;
-    printf("HERE 6\n");
 
     if (set->max_chain_size > 2 * (set->min_chain_size ? set->min_chain_size : 1)) return HS_rebuild(set);
-    printf("HERE 7\n");
     return success;
 }
 

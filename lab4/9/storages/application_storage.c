@@ -113,3 +113,10 @@ Application_storage_ptr application_storage_create(application_storage_type type
     storage->storage = ds;
     return storage;
 }
+
+void application_storage_free(Application_storage_ptr storage)
+{
+    storage->free(&storage->storage);
+    free(storage);
+    storage = NULL;
+}

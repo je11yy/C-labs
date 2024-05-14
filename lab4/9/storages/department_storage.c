@@ -61,3 +61,12 @@ Department_storage_ptr department_storage_create(department_type type)
     department_storage->storage = storage;
     return department_storage;
 }
+
+status departments_storage_insert_application(Department_storage_ptr departments, Application_ptr application)
+{
+    status error;
+    Department_ptr dep = NULL;
+    if ((error = departments->find(departments->storage, application->department_id, &dep)) != success) return error;
+    if ((error = department_insert_application(dep, application)) != success) return error;
+    return success;
+}

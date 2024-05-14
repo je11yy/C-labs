@@ -9,7 +9,7 @@ typedef struct Logger
     FILE * file;
 } Logger, *Logger_ptr;
 
-status create_logger(Logger_ptr raw_space, char * file_name);
+status create_logger(Logger_ptr * raw_space, FILE * file);
 
 void delete_logger(Logger_ptr logger);
 
