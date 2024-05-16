@@ -146,7 +146,7 @@ status scan_applications(Application_ptr ** array, size_t * size, size_t * capac
 {
     char * line = NULL;
     size_t length = 0;
-    while (!feof(file) && getline(&line, &length, file))
+    while (!feof(file) && getline(&line, &length, file) > 0)
     {
         // date and time
         if (validate_time(line) != success)
@@ -158,7 +158,6 @@ status scan_applications(Application_ptr ** array, size_t * size, size_t * capac
         struct tm appl_time = {};
         strptime(line, "%Y-%m-%d %H:%M:%S", &appl_time);
         time_t application_time = mktime(&appl_time);
-
         char * token = strtok(line, " ");
         if (!token) return arguments_error;
         token = strtok(NULL, " ");

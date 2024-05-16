@@ -119,7 +119,6 @@ status Binomial_Heap_meld(Binomial_Heap_ptr * res, Binomial_Heap_ptr * first, Bi
         return invalid_function_argument;
     }
     
-
     Binomial_Heap_node_ptr left_iterator = (*first)->head;
     Binomial_Heap_node_ptr right_iterator = (*second)->head;
 
@@ -132,6 +131,8 @@ status Binomial_Heap_meld(Binomial_Heap_ptr * res, Binomial_Heap_ptr * first, Bi
             Binomial_Heap_free(second);
             return no_memory;
         }
+        Binomial_Heap_free(first);
+        Binomial_Heap_free(second);
         return success;
     }
 
@@ -221,8 +222,8 @@ status Binomial_Heap_meld(Binomial_Heap_ptr * res, Binomial_Heap_ptr * first, Bi
     }
     (*first)->head = (*second)->head = NULL;
     (*first)->max = (*second)->max = NULL;
-    Binomial_Heap_free(first);
-    Binomial_Heap_free(second);
+    free(*first);
+    free(*second);
 
     *res = tmp;
     return success;
