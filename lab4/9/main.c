@@ -242,30 +242,21 @@ status scan_applications(Application_ptr ** array, size_t * size, size_t * capac
     return success;
 }
 
-status compare_time_without_seconds(time_t time1, time_t time2)
-{
-    struct tm time_info_1;
-    localtime_r(&time1, &time_info_1);
-    struct tm time_info_2;
-    localtime_r(&time2, &time_info_2);
-    if (time_info_1.tm_year == time_info_2.tm_year && time_info_1.tm_mon == time_info_2.tm_mon && time_info_1.tm_mday == time_info_2.tm_mday && time_info_1.tm_hour == time_info_2.tm_hour && time_info_1.tm_min == time_info_2.tm_min) return success;
-    return fail;
-}
-
 Application_ptr take_cur_time_application(Application_ptr * applications, size_t * size, time_t current_time)
 {
+    if (!(*size)) return NULL;
     if (compare_time_without_seconds(current_time, applications[0]->time) == success)
     {
         Application_ptr application = applications[0];
-        (*size)--;
         for (int j = 0; j < *size; ++j) applications[j] = applications[j + 1];
+        (*size)--;
         applications[*size] = NULL;
         return application;
     }
     return NULL;
 }
 
-status check_overloading(Department_storage_ptr departments, int * departments_id_array, int departments_count, Logger_ptr logger, time_t current_time)
+status check_overloading(Department_storage_ptr departments, int * departments_id_array, int departments_count, Logger_ptr logger, time_t current_time, int last_appl_id)
 {
     for (int i = 0; i < departments_count; ++i)
     {
@@ -280,8 +271,6 @@ status check_overloading(Department_storage_ptr departments, int * departments_i
         double ovrl_coef = applications/operators;
 
         if (ovrl_coef < dep->overload_coef) continue;
-
-        department_overload(logger, "a", current_time);
 
         Department_ptr min_overload_department = NULL;
         double min_ovrl_coef = -1;
@@ -310,6 +299,7 @@ status check_overloading(Department_storage_ptr departments, int * departments_i
         dep->applications = application_storage_create(min_overload_department->applications->type);
         if (!dep->applications) return no_memory;
         dep->applications_count = 0;
+        department_overload(logger, current_time, last_appl_id, min_overload_department->identifier);
     }
 
     return success;
@@ -363,24 +353,26 @@ void print_departments_data(Department_storage_ptr departments, int * department
 status simulating(Logger_ptr logger, Department_storage_ptr departments, Application_ptr * applications, size_t * size, time_t starting_time, time_t ending_time, int * departments_id_array, int departments_count, unsigned int min_handling_time, unsigned int max_handling_time)
 {
     double seconds = 60;
-    while (*size && starting_time < ending_time)
+    while (starting_time < ending_time)
     {
         status error;
         // извлечение заявок с текущим временем
         struct tm time_info_1;
         localtime_r(&starting_time, &time_info_1);
+        int last_id = -1;
         Application_ptr current_application = take_cur_time_application(applications, size, starting_time);
-        while (current_application && *size)
+        while (current_application)
         {
+            last_id = current_application->id;
             // new request log
-            new_request(logger, current_application->text, starting_time);
+            new_request(logger, starting_time, current_application->id, current_application->department_id);
             if ((error = departments_storage_insert_application(departments, current_application)) != success) return error;
             current_application = take_cur_time_application(applications, size, starting_time);
         }
         
 
         // проверка на загруженность отделений
-        if ((error = check_overloading(departments, departments_id_array, departments_count, logger, starting_time)) != success) return error;
+        if ((error = check_overloading(departments, departments_id_array, departments_count, logger, starting_time, last_id)) != success) return error;
         
         // разгрузка операторов, закончивших работу
         if ((error = vacation_for_finished_operators(departments, starting_time, departments_id_array, departments_count, logger)) != success) return error;

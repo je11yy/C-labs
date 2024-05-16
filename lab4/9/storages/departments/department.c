@@ -7,9 +7,11 @@ Operators_work_time_ptr create_work_time(time_t start_time, unsigned int min_han
     Operators_work_time_ptr work_time = (Operators_work_time_ptr)malloc(sizeof(Operators_work_time));
     if (!work_time) return NULL;
     unsigned int handling_time = rand() % (max_handling_time - min_handling_time + 1) + min_handling_time;
-    time_t end_time = start_time + (handling_time * 50);
+    time_t end_time = start_time + (handling_time * 60);
+    struct tm * end = localtime(&end_time);
     work_time->start_time = start_time;
     work_time->end_time = end_time;
+    work_time->handling_time = handling_time;
     return work_time;
 }
 
@@ -174,9 +176,19 @@ status make_busy_operator(Department_ptr * department, Application_ptr applicati
     if (!(operator->work_time)) return no_memory;
     add_operator_to_list((*department)->busy_operators, operator);
     // handling application log
-    request_handling_started(logger, "", start_time);
+    request_handling_started(logger, start_time, application->id, operator->name);
 
     return success;
+}
+
+status compare_time_without_seconds(time_t time1, time_t time2)
+{
+    struct tm time_info_1;
+    localtime_r(&time1, &time_info_1);
+    struct tm time_info_2;
+    localtime_r(&time2, &time_info_2);
+    if (time_info_1.tm_year == time_info_2.tm_year && time_info_1.tm_mon == time_info_2.tm_mon && time_info_1.tm_mday == time_info_2.tm_mday && time_info_1.tm_hour == time_info_2.tm_hour && time_info_1.tm_min == time_info_2.tm_min) return success;
+    return fail;
 }
 
 status check_busy_operators(Department_ptr * department, time_t current_time, Logger_ptr logger)
@@ -190,7 +202,7 @@ status check_busy_operators(Department_ptr * department, time_t current_time, Lo
 
     while (current)
     {
-        if (current_time - current->work_time->end_time <= 0)
+        if (compare_time_without_seconds(current_time, current->work_time->end_time) == success)
         {
             target = current;
             if (!prev) (*department)->busy_operators->first = current->next;
@@ -199,14 +211,14 @@ status check_busy_operators(Department_ptr * department, time_t current_time, Lo
             (*department)->busy_operators->size--;
             target->next = NULL;
             add_operator_to_list((*department)->free_operators, target);
+            // finished application log
+            request_handling_finished(logger, current_time, target->application->id, target->work_time->handling_time, target->name);
 
             free_application(target->application);
             free(target->work_time);
             target->application = NULL;
             target->work_time = NULL;
 
-            // finished application log
-            request_handling_finished(logger, "", current_time);
         }
         prev = current;
         current = current->next;

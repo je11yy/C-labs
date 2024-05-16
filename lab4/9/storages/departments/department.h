@@ -8,6 +8,7 @@ typedef struct Operators_work_time
 {
     time_t start_time;
     time_t end_time;
+    int handling_time;
 
 } Operators_work_time, *Operators_work_time_ptr;
 
@@ -65,5 +66,7 @@ status make_busy_operator(Department_ptr * department, Application_ptr applicati
 status check_busy_operators(Department_ptr * department, time_t current_time, Logger_ptr logger);
 
 status department_insert_application(Department_ptr department, Application_ptr application);
+
+status compare_time_without_seconds(time_t time1, time_t time2);
 
 #endif
