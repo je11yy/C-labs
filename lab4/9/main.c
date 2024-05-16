@@ -369,8 +369,6 @@ status simulating(Logger_ptr logger, Department_storage_ptr departments, Applica
             if ((error = departments_storage_insert_application(departments, current_application)) != success) return error;
             current_application = take_cur_time_application(applications, size, starting_time);
         }
-        
-
         // проверка на загруженность отделений
         if ((error = check_overloading(departments, departments_id_array, departments_count, logger, starting_time, last_id)) != success) return error;
         

@@ -1,7 +1,10 @@
-all: main
+all: info_generator
+
+info_generator: info_file_generator.c errors.c validation.c application.c logger.c storages/application_storage.c storages/department_storage.c storages/applications/BinaryHeap.c storages/applications/BinomialHeap.c storages/applications/FibonacciHeap.c storages/applications/LeftistHeap.c storages/applications/SkewHeap.c storages/applications/Treap.c storages/departments/BinarySearchTree.c storages/departments/department.c storages/departments/DynamicArray.c storages/departments/HashSet.c storages/departments/Trie.c
+	gcc -g info_file_generator.c errors.c validation.c application.c logger.c storages/application_storage.c storages/department_storage.c storages/applications/BinaryHeap.c storages/applications/BinomialHeap.c storages/applications/FibonacciHeap.c storages/applications/LeftistHeap.c storages/applications/SkewHeap.c storages/applications/Treap.c storages/departments/BinarySearchTree.c storages/departments/department.c storages/departments/DynamicArray.c storages/departments/HashSet.c storages/departments/Trie.c -o info_generator -lm
 
 main: main.c errors.c validation.c application.c logger.c storages/application_storage.c storages/department_storage.c storages/applications/BinaryHeap.c storages/applications/BinomialHeap.c storages/applications/FibonacciHeap.c storages/applications/LeftistHeap.c storages/applications/SkewHeap.c storages/applications/Treap.c storages/departments/BinarySearchTree.c storages/departments/department.c storages/departments/DynamicArray.c storages/departments/HashSet.c storages/departments/Trie.c
 	gcc -g main.c errors.c validation.c application.c logger.c storages/application_storage.c storages/department_storage.c storages/applications/BinaryHeap.c storages/applications/BinomialHeap.c storages/applications/FibonacciHeap.c storages/applications/LeftistHeap.c storages/applications/SkewHeap.c storages/applications/Treap.c storages/departments/BinarySearchTree.c storages/departments/department.c storages/departments/DynamicArray.c storages/departments/HashSet.c storages/departments/Trie.c -o main -lm
 
 clean:
-	rm -rf *.o main
+	rm -rf *.o main info_generator

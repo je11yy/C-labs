@@ -265,7 +265,6 @@ status Binomial_Heap_delete_max(Binomial_Heap_ptr * storage, Application_ptr * r
         prev = current;
         current = current->brother;
     }
-
     // убираем из списка корней
     if (!prev) (*storage)->head = current->brother;
     else prev->brother = max->brother;
@@ -276,9 +275,10 @@ status Binomial_Heap_delete_max(Binomial_Heap_ptr * storage, Application_ptr * r
         Binomial_Heap_free(storage);
         return no_memory;
     }
-
     Binomial_Heap_node_ptr node = max->son;
-    Binomial_Heap_node_ptr next = node->brother;
+    Binomial_Heap_node_ptr next;
+    if (node) next = node->brother;
+    else next = NULL;
     Binomial_Heap_node_ptr bro;
 
     // reverse children

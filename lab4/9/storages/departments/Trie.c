@@ -3,6 +3,7 @@
 Trie_node_ptr Trie_node_create()
 {
     Trie_node_ptr node = (Trie_node_ptr)malloc(sizeof(Trie_node));
+    node->department = NULL;
     if (!node) return NULL;
     for (int i = 0; i < DIGITS_NUMBER; ++i) node->childs[i] = NULL;
     return node;

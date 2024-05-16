@@ -116,13 +116,11 @@ status dynamic_array_find(Dynamic_Array_ptr array, int key, Department_ptr * res
     if (!array || !array->array) return invalid_function_argument;
 
     int left = 0;
-    int right = array->size + 1;
-    int middle = (left + right) / 2;
+    int right = array->size - 1;
 
     while (left <= right)
     {
-        middle = left + (right - left) / 2;
-
+        int middle = left + (right - left) / 2;
         if (array->array[middle]->key == key)
         {
             *result = array->array[middle]->department;

@@ -2,122 +2,29 @@
 [REQUEST_HANDLING_STARTED] [2024-04-25 12:00:00]: Application id: 1231, Operator name: ed
 [NEW_REQUEST] [2024-04-25 12:01:00]: Application id: 1232, Department id: 344
 [NEW_REQUEST] [2024-04-25 12:01:00]: Application id: 1238, Department id: 344
-[NEW_REQUEST] [2024-04-25 12:01:00]: Application id: 11212, Department id: 344
-[NEW_REQUEST] [2024-04-25 12:01:00]: Application id: 11245, Department id: 344
 [REQUEST_HANDLING_STARTED] [2024-04-25 12:01:00]: Application id: 1238, Operator name: a
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:01:00]: Application id: 11245, Operator name: c
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:01:00]: Application id: 11212, Operator name: ccdcbaa
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:01:00]: Application id: 1232, Operator name: cadfcbaac
+[REQUEST_HANDLING_STARTED] [2024-04-25 12:01:00]: Application id: 1232, Operator name: c
 [NEW_REQUEST] [2024-04-25 12:02:00]: Application id: 1230, Department id: 1728
 [REQUEST_HANDLING_STARTED] [2024-04-25 12:02:00]: Application id: 1230, Operator name: fbeadbcb
 [NEW_REQUEST] [2024-04-25 12:03:00]: Application id: 1237, Department id: 3178
-[NEW_REQUEST] [2024-04-25 12:03:00]: Application id: 44, Department id: 1728
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:03:00]: Application id: 44, Operator name: bfeaae
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:03:00]: Application id: 1237, Operator name: eeeaad
+[REQUEST_HANDLING_STARTED] [2024-04-25 12:03:00]: Application id: 1237, Operator name: bfbdbccdd
 [NEW_REQUEST] [2024-04-25 12:04:00]: Application id: 1233, Department id: 1758
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:04:00]: Application id: 1233, Operator name: dafeff
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:06:00]: Application id: 1232, Handling time: 5, Operator name: cadfcbaac
+[REQUEST_HANDLING_STARTED] [2024-04-25 12:04:00]: Application id: 1233, Operator name: efeddb
 [NEW_REQUEST] [2024-04-25 12:07:00]: Application id: 1239, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:07:00]: Application id: 11234, Department id: 1758
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:07:00]: Application id: 1239, Operator name: fc
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:07:00]: Application id: 11234, Operator name: edc
-[NEW_REQUEST] [2024-04-25 12:08:00]: Application id: 11223, Department id: 3178
-[NEW_REQUEST] [2024-04-25 12:08:00]: Application id: 33, Department id: 1728
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:08:00]: Application id: 33, Operator name: dcccbbb
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:08:00]: Application id: 11223, Operator name: f
+[REQUEST_HANDLING_STARTED] [2024-04-25 12:07:00]: Application id: 1239, Operator name: bfeaae
 [NEW_REQUEST] [2024-04-25 12:09:00]: Application id: 1234, Department id: 3178
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:09:00]: Application id: 1234, Operator name: c
-[NEW_REQUEST] [2024-04-25 12:10:00]: Application id: 32, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:10:00]: Application id: 43, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:10:00]: Application id: 1237, Handling time: 7, Operator name: eeeaad
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:10:00]: Application id: 32, Operator name: aaafdb
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:10:00]: Application id: 43, Operator name: bedddfcb
-[NEW_REQUEST] [2024-04-25 12:11:00]: Application id: 45, Department id: 1728
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:11:00]: Application id: 45, Operator name: cfafeb
+[REQUEST_HANDLING_STARTED] [2024-04-25 12:09:00]: Application id: 1234, Operator name: dcebbfc
 [NEW_REQUEST] [2024-04-25 12:12:00]: Application id: 1235, Department id: 1753
-[NEW_REQUEST] [2024-04-25 12:12:00]: Application id: 21839, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:12:00]: Application id: 42, Department id: 1728
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:12:00]: Application id: 42, Operator name: cdccebddc
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:12:00]: Application id: 21839, Operator name: cfedbfa
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:12:00]: Application id: 1235, Operator name: bdabafc
-[NEW_REQUEST] [2024-04-25 12:13:00]: Application id: 39, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:14:00]: Application id: 21435, Department id: 1758
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:14:00]: Application id: 1231, Handling time: 14, Operator name: ed
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:14:00]: Application id: 39, Operator name: ed
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:14:00]: Application id: 21435, Operator name: dfaaefeda
-[NEW_REQUEST] [2024-04-25 12:15:00]: Application id: 21334, Department id: 3178
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:15:00]: Application id: 21334, Operator name: afcf
+[REQUEST_HANDLING_STARTED] [2024-04-25 12:12:00]: Application id: 1235, Operator name: edbbaefac
+[REQUEST_HANDLING_FINISHED] [2024-04-25 12:13:00]: Application id: 1232, Handling time: 12, Operator name: c
 [NEW_REQUEST] [2024-04-25 12:16:00]: Application id: 1236, Department id: 344
-[NEW_REQUEST] [2024-04-25 12:16:00]: Application id: 11201, Department id: 3178
-[NEW_REQUEST] [2024-04-25 12:16:00]: Application id: 11278, Department id: 3178
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:16:00]: Application id: 1236, Operator name: b
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:16:00]: Application id: 11278, Operator name: fe
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:16:00]: Application id: 11201, Operator name: ffcedca
-[NEW_REQUEST] [2024-04-25 12:17:00]: Application id: 21233, Department id: 3178
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:17:00]: Application id: 11212, Handling time: 16, Operator name: ccdcbaa
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:17:00]: Application id: 1235, Handling time: 5, Operator name: bdabafc
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:17:00]: Application id: 21233, Operator name: bddecfcaf
-[NEW_REQUEST] [2024-04-25 12:18:00]: Application id: 11289, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:19:00]: Application id: 43, Handling time: 9, Operator name: bedddfcb
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:19:00]: Application id: 11289, Operator name: bedddfcb
-[NEW_REQUEST] [2024-04-25 12:20:00]: Application id: 11290, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:21:00]: Application id: 11223, Handling time: 13, Operator name: f
-[NEW_REQUEST] [2024-04-25 12:23:00]: Application id: 47, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:23:00]: Application id: 32, Handling time: 13, Operator name: aaafdb
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:23:00]: Application id: 47, Operator name: aaafdb
-[NEW_REQUEST] [2024-04-25 12:24:00]: Application id: 37, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:27:00]: Application id: 21132, Department id: 1753
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:27:00]: Application id: 21132, Operator name: eddcc
-[NEW_REQUEST] [2024-04-25 12:28:00]: Application id: 21031, Department id: 1753
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:28:00]: Application id: 21031, Operator name: fadb
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:30:00]: Application id: 45, Handling time: 19, Operator name: cfafeb
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:30:00]: Application id: 37, Operator name: cfafeb
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:32:00]: Application id: 1238, Handling time: 31, Operator name: a
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:32:00]: Application id: 21233, Handling time: 15, Operator name: bddecfcaf
-[NEW_REQUEST] [2024-04-25 12:34:00]: Application id: 21738, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:34:00]: Application id: 31, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:34:00]: Application id: 38, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:34:00]: Application id: 11289, Handling time: 15, Operator name: bedddfcb
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:34:00]: Application id: 31, Operator name: bedddfcb
-[NEW_REQUEST] [2024-04-25 12:35:00]: Application id: 11256, Department id: 344
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:35:00]: Application id: 11256, Operator name: ea
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:36:00]: Application id: 39, Handling time: 22, Operator name: ed
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:36:00]: Application id: 38, Operator name: ed
-[NEW_REQUEST] [2024-04-25 12:40:00]: Application id: 21, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:41:00]: Application id: 22, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:41:00]: Application id: 1230, Handling time: 39, Operator name: fbeadbcb
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:41:00]: Application id: 1233, Handling time: 37, Operator name: dafeff
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:41:00]: Application id: 22, Operator name: fbeadbcb
-[NEW_REQUEST] [2024-04-25 12:42:00]: Application id: 23, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:42:00]: Application id: 11278, Handling time: 26, Operator name: fe
-[NEW_REQUEST] [2024-04-25 12:43:00]: Application id: 24, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:43:00]: Application id: 36, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:43:00]: Application id: 21435, Handling time: 29, Operator name: dfaaefeda
-[NEW_REQUEST] [2024-04-25 12:44:00]: Application id: 25, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:45:00]: Application id: 21637, Department id: 344
-[NEW_REQUEST] [2024-04-25 12:45:00]: Application id: 26, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:45:00]: Application id: 38, Handling time: 9, Operator name: ed
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:45:00]: Application id: 26, Operator name: ed
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:45:00]: Application id: 21637, Operator name: fdec
-[NEW_REQUEST] [2024-04-25 12:46:00]: Application id: 27, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:46:00]: Application id: 11234, Handling time: 39, Operator name: edc
-[NEW_REQUEST] [2024-04-25 12:47:00]: Application id: 28, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:48:00]: Application id: 29, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:49:00]: Application id: 30, Department id: 1728
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:49:00]: Application id: 21031, Handling time: 21, Operator name: fadb
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:50:00]: Application id: 44, Handling time: 47, Operator name: bfeaae
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:50:00]: Application id: 1236, Handling time: 34, Operator name: b
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:50:00]: Application id: 30, Operator name: bfeaae
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:51:00]: Application id: 31, Handling time: 17, Operator name: bedddfcb
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:51:00]: Application id: 1234, Handling time: 42, Operator name: c
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:51:00]: Application id: 29, Operator name: bedddfcb
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:53:00]: Application id: 11201, Handling time: 37, Operator name: ffcedca
-[NEW_REQUEST] [2024-04-25 12:54:00]: Application id: 40, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:54:00]: Application id: 46, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:55:00]: Application id: 41, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:56:00]: Application id: 35, Department id: 1728
-[NEW_REQUEST] [2024-04-25 12:58:00]: Application id: 11267, Department id: 1758
-[NEW_REQUEST] [2024-04-25 12:58:00]: Application id: 21536, Department id: 1758
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:58:00]: Application id: 11267, Operator name: cbc
-[REQUEST_HANDLING_STARTED] [2024-04-25 12:58:00]: Application id: 21536, Operator name: bffeccb
-[REQUEST_HANDLING_FINISHED] [2024-04-25 12:59:00]: Application id: 21334, Handling time: 44, Operator name: afcf
+[REQUEST_HANDLING_STARTED] [2024-04-25 12:16:00]: Application id: 1236, Operator name: ccdcbaa
+[REQUEST_HANDLING_FINISHED] [2024-04-25 12:17:00]: Application id: 1231, Handling time: 17, Operator name: ed
+[REQUEST_HANDLING_FINISHED] [2024-04-25 12:18:00]: Application id: 1233, Handling time: 14, Operator name: efeddb
+[REQUEST_HANDLING_FINISHED] [2024-04-25 12:19:00]: Application id: 1238, Handling time: 18, Operator name: a
+[REQUEST_HANDLING_FINISHED] [2024-04-25 12:24:00]: Application id: 1235, Handling time: 12, Operator name: edbbaefac
+[REQUEST_HANDLING_FINISHED] [2024-04-25 12:32:00]: Application id: 1239, Handling time: 25, Operator name: bfeaae
+[REQUEST_HANDLING_FINISHED] [2024-04-25 12:33:00]: Application id: 1234, Handling time: 24, Operator name: dcebbfc
+[REQUEST_HANDLING_FINISHED] [2024-04-25 12:39:00]: Application id: 1237, Handling time: 36, Operator name: bfbdbccdd
+[REQUEST_HANDLING_FINISHED] [2024-04-25 12:41:00]: Application id: 1236, Handling time: 25, Operator name: ccdcbaa
+[REQUEST_HANDLING_FINISHED] [2024-04-25 12:42:00]: Application id: 1230, Handling time: 40, Operator name: fbeadbcb
