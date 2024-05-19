@@ -1,0 +1,25 @@
+{
+    "files.associations": {
+        ".fantomasignore": "ignore",
+        "stdio.h": "c",
+        "errors.h": "c",
+        "stdlib.h": "c",
+        "time.h": "c",
+        "string.h": "c",
+        "validation.h": "c",
+        "binaryheap.h": "c",
+        "binomialheap.h": "c",
+        "application.h": "c",
+        "treap.h": "c",
+        "application_storage.h": "c",
+        "leftistheap.h": "c",
+        "fibonacciheap.h": "c",
+        "department.h": "c",
+        "hashset.h": "c",
+        "dynamicarray.h": "c",
+        "binarysearchtree.h": "c",
+        "trie.h": "c",
+        "department_storage.h": "c",
+        "logger.h": "c"
+    }
+}
